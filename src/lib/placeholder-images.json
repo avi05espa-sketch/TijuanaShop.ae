@@ -1,3 +1,100 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "product-1",
+      "description": "A used bicycle in good condition.",
+      "imageUrl": "https://images.unsplash.com/photo-1641632271423-7511f1019371?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxiaWN5Y2xlJTIwc3RyZWV0fGVufDB8fHx8MTc2NTkxODY2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bicycle street"
+    },
+    {
+      "id": "product-2",
+      "description": "A modern sofa for a living room.",
+      "imageUrl": "https://images.unsplash.com/photo-1759722665935-0967b4e0da93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxzb2ZhJTIwbGl2aW5nfGVufDB8fHx8MTc2NTg4NTE5OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sofa living"
+    },
+    {
+      "id": "product-3",
+      "description": "A latest model smartphone.",
+      "imageUrl": "https://images.unsplash.com/photo-1676173646307-d050e097d181?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzbWFydHBob25lJTIwdGVjaG5vbG9neXxlbnwwfHx8fDE3NjU5MDM0NzR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "smartphone technology"
+    },
+    {
+      "id": "product-4",
+      "description": "A stylish leather jacket.",
+      "imageUrl": "https://images.unsplash.com/photo-1578198576866-7e0ba6078128?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsZWF0aGVyJTIwamFja2V0fGVufDB8fHx8MTc2NTg2NTUyOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "leather jacket"
+    },
+    {
+      "id": "product-5",
+      "description": "A classic acoustic guitar.",
+      "imageUrl": "https://images.unsplash.com/photo-1471478331149-c72f17e33c73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhY291c3RpYyUyMGd1aXRhcnxlbnwwfHx8fDE3NjU4OTQ5OTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "acoustic guitar"
+    },
+    {
+      "id": "product-6",
+      "description": "A vintage sedan car.",
+      "imageUrl": "https://images.unsplash.com/photo-1587750113469-d2ba02441e8f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx2aW50YWdlJTIwY2FyfGVufDB8fHx8MTc2NTgxMTc1MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "vintage car"
+    },
+    {
+      "id": "product-7",
+      "description": "A set of kitchen knives.",
+      "imageUrl": "https://images.unsplash.com/photo-1678097339439-eea4ad0578fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxraXRjaGVuJTIwa25pdmVzfGVufDB8fHx8MTc2NTg3OTEyNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "kitchen knives"
+    },
+    {
+      "id": "product-8",
+      "description": "A collection of houseplants.",
+      "imageUrl": "https://images.unsplash.com/photo-1693552562462-d6b46cf305ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxob3VzZXBsYW50cyUyMGdyZWVufGVufDB8fHx8MTc2NTkxODY2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "houseplants green"
+    },
+    {
+      "id": "product-9",
+      "description": "A high-performance laptop.",
+      "imageUrl": "https://images.unsplash.com/photo-1535957998253-26ae1ef29506?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxsYXB0b3AlMjBkZXNrfGVufDB8fHx8MTc2NTg5MjcwNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "laptop desk"
+    },
+    {
+      "id": "product-10",
+      "description": "Running sneakers for athletes.",
+      "imageUrl": "https://images.unsplash.com/photo-1469395446868-fb6a048d5ca3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxydW5uaW5nJTIwc2hvZXN8ZW58MHx8fHwxNzY1ODU1NTYxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "running shoes"
+    },
+    {
+      "id": "product-11",
+      "description": "A DSLR camera with lens.",
+      "imageUrl": "https://images.unsplash.com/photo-1726994133940-1e029529cc12?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjYW1lcmElMjBkc2xyfGVufDB8fHx8MTc2NTkxODY2Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "camera dslr"
+    },
+    {
+      "id": "product-12",
+      "description": "A modern office chair.",
+      "imageUrl": "https://images.unsplash.com/photo-1681418659069-eef28d44aeab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxvZmZpY2UlMjBjaGFpcnxlbnwwfHx8fDE3NjU5MDgzOTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "office chair"
+    },
+    {
+      "id": "user-1",
+      "description": "Profile picture for user 1.",
+      "imageUrl": "https://images.unsplash.com/photo-1592621385612-4d7129426394?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc2NTkwMjk0OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "user-2",
+      "description": "Profile picture for user 2.",
+      "imageUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjU4MzUyOTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "user-3",
+      "description": "Profile picture for user 3.",
+      "imageUrl": "https://images.unsplash.com/photo-1554727242-741c14fa561c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZXJzb24lMjBzbWlsaW5nfGVufDB8fHx8MTc2NTg3MjczNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person smiling"
+    },
+    {
+      "id": "user-4",
+      "description": "Profile picture for user 4.",
+      "imageUrl": "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtYW4lMjBnbGFzc2VzfGVufDB8fHx8MTc2NTkxNjQwMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man glasses"
+    }
+  ]
 }

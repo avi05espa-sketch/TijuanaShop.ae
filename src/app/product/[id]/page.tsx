@@ -1,0 +1,125 @@
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { getProduct, getUser } from '@/lib/data';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { MessageCircle, Phone, Heart, Share2 } from 'lucide-react';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+
+export default function ProductPage({ params }: { params: { id: string } }) {
+  const product = getProduct(params.id);
+
+  if (!product) {
+    notFound();
+  }
+
+  const seller = getUser(product.sellerId);
+
+  return (
+    <div className="flex flex-col min-h-screen">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+          <Button variant="outline" asChild>
+            <Link href="/">← Volver</Link>
+          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon">
+              <Share2 className="h-5 w-5" />
+              <span className="sr-only">Compartir</span>
+            </Button>
+            <Button variant="ghost" size="icon">
+              <Heart className="h-5 w-5" />
+              <span className="sr-only">Guardar favorito</span>
+            </Button>
+          </div>
+        </div>
+      </header>
+      <main className="container mx-auto max-w-6xl px-4 py-8 md:py-12">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+          <div>
+            <Carousel className="w-full">
+              <CarouselContent>
+                {product.images.map((img, index) => {
+                   const placeholder = PlaceHolderImages.find(p => p.imageUrl === img);
+                   const imageHint = placeholder?.imageHint || 'product photo';
+                  return (
+                    <CarouselItem key={index}>
+                      <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden border">
+                         <Image
+                            src={img}
+                            alt={`${product.title} - imagen ${index + 1}`}
+                            width={800}
+                            height={600}
+                            className="object-cover w-full h-full"
+                            data-ai-hint={imageHint}
+                        />
+                      </div>
+                    </CarouselItem>
+                  )
+                })}
+              </CarouselContent>
+              <CarouselPrevious className="left-4" />
+              <CarouselNext className="right-4" />
+            </Carousel>
+          </div>
+          <div className="flex flex-col gap-6">
+            <div>
+              <div className="flex items-start justify-between">
+                <h1 className="text-3xl lg:text-4xl font-bold font-headline">
+                  {product.title}
+                </h1>
+                <Badge variant={product.condition === 'Nuevo' ? 'default' : 'secondary'}>
+                  {product.condition}
+                </Badge>
+              </div>
+              <p className="text-3xl font-bold text-primary mt-2">
+                ${product.price.toLocaleString('es-MX')}
+              </p>
+            </div>
+
+            <p className="text-base text-foreground/80 whitespace-pre-wrap">
+              {product.description}
+            </p>
+
+            <Separator />
+
+            {seller && (
+              <div className="rounded-lg border bg-card p-4">
+                <p className="font-semibold text-sm mb-4">Vendido por</p>
+                <Link href={`/profile/${seller.id}`} className="flex items-center gap-4 group">
+                    <Avatar className="h-14 w-14">
+                      <AvatarImage src={seller.profilePicture} alt={seller.name} />
+                      <AvatarFallback>{seller.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-bold text-lg group-hover:text-primary transition-colors">{seller.name}</p>
+                      <p className="text-sm text-muted-foreground">{seller.location}</p>
+                    </div>
+                </Link>
+              </div>
+            )}
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+               <Button size="lg" className="h-12 text-lg">
+                <MessageCircle className="mr-2 h-6 w-6" /> Enviar mensaje
+              </Button>
+              <Button size="lg" variant="outline" className="h-12 text-lg">
+                <Phone className="mr-2 h-6 w-6" /> Llamar
+              </Button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
