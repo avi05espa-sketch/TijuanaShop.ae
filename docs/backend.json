@@ -39,6 +39,14 @@
                 "type": "string"
             },
             "description": "Array of product IDs that the user has favorited."
+        },
+        "rating": {
+            "type": "number",
+            "description": "The user's average rating from 0 to 5."
+        },
+        "ratingCount": {
+            "type": "number",
+            "description": "The total number of ratings the user has received."
         }
       },
       "required": ["uid", "name", "email", "createdAt"]

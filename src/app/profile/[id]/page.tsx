@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Loader2, Mail, MapPin } from 'lucide-react';
 import { ProductCard } from '@/components/product-card';
 import Link from 'next/link';
+import { StarRating } from '@/components/star-rating';
 
 function ProfileSkeleton() {
   return (
@@ -111,6 +112,10 @@ export default function ProfilePage() {
             </Avatar>
             <div className="flex-1 text-center md:text-left">
                 <h1 className="text-4xl font-bold font-headline">{user.name}</h1>
+                <div className="flex items-center justify-center md:justify-start gap-2 text-muted-foreground mt-2">
+                    <StarRating rating={user.rating || 0} />
+                    <span className="text-sm">({user.ratingCount || 0} reseñas)</span>
+                </div>
                 <div className="flex items-center justify-center md:justify-start gap-4 text-muted-foreground mt-2">
                     <div className="flex items-center gap-2">
                         <MapPin className="h-4 w-4" />

@@ -27,6 +27,8 @@ export interface User {
   createdAt: any; // Can be a server timestamp
   listings?: string[];
   favorites?: string[];
+  rating?: number;
+  ratingCount?: number;
 }
 
 
