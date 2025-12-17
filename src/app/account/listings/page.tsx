@@ -86,6 +86,7 @@ export default function MyListingsPage() {
                         </CardContent>
                     </Card>
                 )
+            }
             </main>
          </div>
     )
