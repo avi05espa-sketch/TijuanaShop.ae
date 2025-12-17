@@ -29,8 +29,7 @@ export default function SellPage() {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState<"Nuevo" | "Usado">();
-  const [location, setLocation] = useState("");
-  const [images, setImages] = useState<FileList | null>(null);
+  const [location, setLocation] = useState("Tijuana");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -45,7 +44,7 @@ export default function SellPage() {
       return;
     }
 
-    if (!title || !description || !price || !category || !condition || !location || !images || images.length === 0) {
+    if (!title || !description || !price || !category || !condition || !location) {
       toast({
         variant: "destructive",
         title: "Campos incompletos",
@@ -57,7 +56,8 @@ export default function SellPage() {
     setIsSubmitting(true);
     
     try {
-      const imageUrls = Array.from(images).map((file, index) => `https://picsum.photos/seed/${user.uid}-${Date.now()}-${index}/600/400`);
+      // Generate placeholder images instead of requiring upload
+      const imageUrls = Array.from({ length: 3 }, (_, i) => `https://picsum.photos/seed/${user.uid}-${Date.now()}-${i}/600/400`);
 
       const productData: Omit<Product, 'id' | 'createdAt'> = {
         title,
@@ -112,24 +112,11 @@ export default function SellPage() {
           <CardHeader>
             <CardTitle>Detalles del producto</CardTitle>
             <CardDescription>
-              Completa la información para publicar tu artículo en el marketplace.
+              Completa la información para publicar tu artículo. Las imágenes se generarán automáticamente.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form className="grid gap-6" onSubmit={handleSubmit}>
-              <div className="grid gap-2">
-                <Label htmlFor="photos">Fotos</Label>
-                <Input 
-                  id="photos" 
-                  type="file" 
-                  multiple 
-                  required 
-                  onChange={(e) => setImages(e.target.files)}
-                  className="file:text-primary file:font-semibold"
-                  disabled={isSubmitting}
-                />
-                <p className="text-sm text-muted-foreground">Sube una o más imágenes de tu producto.</p>
-              </div>
               <div className="grid gap-2">
                 <Label htmlFor="title">Título</Label>
                 <Input 
@@ -206,14 +193,11 @@ export default function SellPage() {
                   </Select>
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="location">Ubicación general</Label>
+                  <Label htmlFor="location">Ubicación</Label>
                   <Input 
                     id="location" 
-                    placeholder="Ej: Playas de Tijuana" 
-                    required 
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    disabled={isSubmitting}
+                    value="Tijuana"
+                    disabled
                     className="bg-zinc-100 dark:bg-zinc-800"
                   />
                 </div>
@@ -232,5 +216,3 @@ export default function SellPage() {
     </div>
   );
 }
-
-    
