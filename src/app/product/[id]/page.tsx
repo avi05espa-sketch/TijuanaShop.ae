@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getProduct, getUser, getOrCreateChat, toggleFavorite, getUser as getUserData } from '@/lib/data';
+import { getProduct, getUser, getOrCreateChat, toggleFavorite, getUser as getUserData, incrementProductViewCount } from '@/lib/data';
 import type { Product, User } from '@/lib/types';
 import { useFirebase, useUser as useAuthUser } from '@/firebase';
 import {
@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { MessageCircle, Phone, Heart, Share2, Loader2 } from 'lucide-react';
+import { MessageCircle, Phone, Heart, Share2, Loader2, Eye } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
@@ -87,6 +87,11 @@ export default function ProductPage() {
       }
 
       setProduct(productData);
+
+      // Increment view count if the user is not the seller
+      if (currentUser && productData.sellerId !== currentUser.uid) {
+          incrementProductViewCount(firestore, id);
+      }
 
       if (productData.sellerId) {
         const sellerData = await getUser(firestore, productData.sellerId);
@@ -245,6 +250,16 @@ export default function ProductPage() {
               <CarouselPrevious className="left-4" />
               <CarouselNext className="right-4" />
             </Carousel>
+             <div className="flex items-center gap-4 text-sm text-muted-foreground mt-4">
+                <div className="flex items-center gap-1.5">
+                    <Eye className="h-4 w-4" />
+                    <span>{product.viewCount || 0} vistas</span>
+                </div>
+                 <div className="flex items-center gap-1.5">
+                    <Heart className="h-4 w-4" />
+                    <span>Guardado {product.favoritedBy?.length || 0} veces</span>
+                </div>
+            </div>
           </div>
           <div className="flex flex-col gap-6">
             <div>

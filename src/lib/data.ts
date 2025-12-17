@@ -18,6 +18,7 @@ import {
   arrayRemove,
   writeBatch,
   setDoc,
+  increment,
 } from 'firebase/firestore';
 import type { Firestore } from 'firebase/firestore';
 import type { Product, Category, User, Chat, Message } from './types';
@@ -97,14 +98,7 @@ export async function getProducts(db: Firestore, {
       const data = doc.data();
       return {
         id: doc.id,
-        title: data.title,
-        description: data.description,
-        price: data.price,
-        category: data.category,
-        condition: data.condition,
-        location: data.location,
-        sellerId: data.sellerId,
-        images: data.images,
+        ...data,
         createdAt: data.createdAt?.toDate().toISOString(),
       } as Product;
     });
@@ -322,24 +316,32 @@ export function sendMessage(db: Firestore, chatId: string, senderId: string, tex
 
 export async function toggleFavorite(db: Firestore, userId: string, productId: string) {
     const userRef = doc(db, "users", userId);
-    const userDoc = await getDoc(userRef);
+    const productRef = doc(db, "products", productId);
 
+    const userDoc = await getDoc(userRef);
     if (!userDoc.exists()) {
         throw new Error("User not found");
     }
+    const isFavorited = userDoc.data().favorites?.includes(productId);
 
-    const favorites = userDoc.data().favorites || [];
-    const isFavorited = favorites.includes(productId);
+    const batch = writeBatch(db);
 
-    const updateData = isFavorited 
+    const userUpdate = isFavorited 
         ? { favorites: arrayRemove(productId) }
         : { favorites: arrayUnion(productId) };
+    
+    const productUpdate = isFavorited
+        ? { favoritedBy: arrayRemove(userId), }
+        : { favoritedBy: arrayUnion(userId), };
 
-    await updateDoc(userRef, updateData).catch(error => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({
+    batch.update(userRef, userUpdate);
+    batch.update(productRef, productUpdate);
+
+    await batch.commit().catch(error => {
+         errorEmitter.emit('permission-error', new FirestorePermissionError({
             path: userRef.path,
             operation: 'update',
-            requestResourceData: updateData
+            requestResourceData: { userUpdate, productUpdate }
         } satisfies SecurityRuleContext));
         throw error;
     });
@@ -369,15 +371,17 @@ export async function getFavoriteProducts(db: Firestore, userId: string): Promis
     return products;
 }
 
-// Updated function to add a product, with structured error handling
+// --- Product Functions ---
+
 export function addProduct(db: Firestore, productData: Omit<Product, 'id' | 'createdAt'>) {
     const productsRef = collection(db, "products");
     const newProductData = {
         ...productData,
+        viewCount: 0,
+        favoritedBy: [],
         createdAt: serverTimestamp(),
     };
     
-    // Return the promise from addDoc
     return addDoc(productsRef, newProductData)
         .catch((error) => {
             errorEmitter.emit('permission-error', new FirestorePermissionError({
@@ -385,12 +389,24 @@ export function addProduct(db: Firestore, productData: Omit<Product, 'id' | 'cre
                 operation: 'create',
                 requestResourceData: newProductData,
             } satisfies SecurityRuleContext));
-            // Re-throw so the calling UI can handle the submission failure
             throw error;
         });
 }
 
-// Updated function to create a user profile, with structured error handling
+export function incrementProductViewCount(db: Firestore, productId: string) {
+    const productRef = doc(db, 'products', productId);
+    updateDoc(productRef, {
+        viewCount: increment(1)
+    }).catch(error => {
+        // This can fail if rules are restrictive, but we don't want to bother the user
+        // with an error toast for a simple view count increment.
+        console.warn(`Could not increment view count for product ${productId}:`, error.message);
+    });
+}
+
+
+// --- User Functions ---
+
 export function createUserProfile(db: Firestore, userId: string, userData: Omit<User, 'id' | 'createdAt' | 'uid'>) {
     const userRef = doc(db, 'users', userId);
     const newUserProfile = {
@@ -399,7 +415,6 @@ export function createUserProfile(db: Firestore, userId: string, userData: Omit<
         createdAt: serverTimestamp(),
     };
     
-    // Return the promise from setDoc
     return setDoc(userRef, newUserProfile, { merge: true })
         .catch(error => {
             errorEmitter.emit('permission-error', new FirestorePermissionError({
@@ -410,5 +425,3 @@ export function createUserProfile(db: Firestore, userId: string, userData: Omit<
             throw error;
         });
 }
-
-    

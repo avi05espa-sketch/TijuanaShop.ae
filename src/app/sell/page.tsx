@@ -59,7 +59,7 @@ export default function SellPage() {
       // Generate placeholder images instead of requiring upload
       const imageUrls = Array.from({ length: 3 }, (_, i) => `https://picsum.photos/seed/${user.uid}-${Date.now()}-${i}/600/400`);
 
-      const productData: Omit<Product, 'id' | 'createdAt'> = {
+      const productData = {
         title,
         description,
         price: Number(price),

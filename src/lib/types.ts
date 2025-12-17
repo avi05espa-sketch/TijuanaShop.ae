@@ -10,6 +10,8 @@ export interface Product {
   sellerId: string;
   images: string[];
   createdAt: string;
+  viewCount?: number;
+  favoritedBy?: string[];
 }
 
 export interface Category {
