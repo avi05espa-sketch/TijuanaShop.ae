@@ -13,6 +13,7 @@ import { Logo } from "@/components/logo";
 import { useToast } from "@/hooks/use-toast";
 import { useFirebase } from "@/firebase";
 import { FirebaseError } from "firebase/app";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function RegisterPage() {
   const { app } = useFirebase();
@@ -24,6 +25,7 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -33,6 +35,14 @@ export default function RegisterPage() {
         variant: "destructive",
         title: "Contraseña inválida",
         description: "La contraseña debe tener al menos 6 caracteres.",
+      });
+      return;
+    }
+    if (!termsAccepted) {
+      toast({
+        variant: "destructive",
+        title: "Términos no aceptados",
+        description: "Debes aceptar los términos y condiciones para continuar.",
       });
       return;
     }
@@ -126,7 +136,21 @@ export default function RegisterPage() {
                 disabled={isLoading}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+             <div className="flex items-center space-x-2">
+              <Checkbox id="terms" checked={termsAccepted} onCheckedChange={(checked) => setTermsAccepted(checked as boolean)} />
+              <Label htmlFor="terms" className="text-sm font-normal text-muted-foreground">
+                Acepto los{" "}
+                <Link href="/terms" className="underline hover:text-primary">
+                  Términos y Condiciones
+                </Link>{" "}
+                y la{" "}
+                <Link href="/privacy" className="underline hover:text-primary">
+                  Política de Privacidad
+                </Link>
+                .
+              </Label>
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading || !termsAccepted}>
               {isLoading ? "Creando cuenta..." : "Crear cuenta"}
             </Button>
           </form>
