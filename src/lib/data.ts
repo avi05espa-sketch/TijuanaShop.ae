@@ -149,11 +149,23 @@ const products: Product[] = [
   },
 ];
 
-export function getProducts(query?: string, category?: string): Product[] {
+export function getProducts({
+  query,
+  categories,
+  conditions,
+}: {
+  query?: string;
+  categories?: string[];
+  conditions?: string[];
+} = {}): Product[] {
   let filteredProducts = [...products];
 
-  if (category) {
-    filteredProducts = filteredProducts.filter(p => p.category === category);
+  if (categories && categories.length > 0) {
+    filteredProducts = filteredProducts.filter(p => categories.includes(p.category));
+  }
+  
+  if (conditions && conditions.length > 0) {
+    filteredProducts = filteredProducts.filter(p => conditions.includes(p.condition));
   }
 
   if (query) {

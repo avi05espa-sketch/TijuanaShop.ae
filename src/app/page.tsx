@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState, useEffect, useMemo } from "react";
 import {
   Car,
   Smartphone,
@@ -6,14 +9,13 @@ import {
   Shirt,
   Blocks,
   Plus,
-  ChevronDown,
 } from "lucide-react";
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
 import { Header } from "@/components/header";
 import { getProducts, getCategories } from "@/lib/data";
-import type { Category } from "@/lib/types";
+import type { Category, Product } from "@/lib/types";
 import {
   Accordion,
   AccordionContent,
@@ -31,7 +33,19 @@ const iconMap: { [key: string]: React.ElementType } = {
   Otros: Blocks,
 };
 
-const FilterSection = () => (
+const FilterSection = ({ 
+    categories,
+    selectedCategories,
+    onCategoryChange,
+    selectedConditions,
+    onConditionChange
+}: { 
+    categories: Category[],
+    selectedCategories: string[],
+    onCategoryChange: (id: string, checked: boolean) => void,
+    selectedConditions: string[],
+    onConditionChange: (condition: string, checked: boolean) => void
+}) => (
   <aside className="w-full md:w-1/4 lg:w-1/5 p-4">
     <h2 className="text-xl font-bold mb-4">Filtros</h2>
     <Accordion type="multiple" defaultValue={['category', 'condition']} className="w-full">
@@ -39,26 +53,16 @@ const FilterSection = () => (
         <AccordionTrigger>Categoría</AccordionTrigger>
         <AccordionContent>
           <div className="grid gap-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox id="cat-autos" />
-              <Label htmlFor="cat-autos">Autos</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="cat-electronica" />
-              <Label htmlFor="cat-electronica">Electrónica</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="cat-hogar" />
-              <Label htmlFor="cat-hogar">Hogar</Label>
-            </div>
-             <div className="flex items-center space-x-2">
-              <Checkbox id="cat-ropa" />
-              <Label htmlFor="cat-ropa">Ropa</Label>
-            </div>
-             <div className="flex items-center space-x-2">
-              <Checkbox id="cat-otros" />
-              <Label htmlFor="cat-otros">Otros</Label>
-            </div>
+            {categories.map((cat) => (
+                 <div key={cat.id} className="flex items-center space-x-2">
+                    <Checkbox 
+                        id={`cat-${cat.id}`} 
+                        checked={selectedCategories.includes(cat.id)}
+                        onCheckedChange={(checked) => onCategoryChange(cat.id, checked as boolean)}
+                    />
+                    <Label htmlFor={`cat-${cat.id}`}>{cat.name}</Label>
+                </div>
+            ))}
           </div>
         </AccordionContent>
       </AccordionItem>
@@ -67,11 +71,19 @@ const FilterSection = () => (
         <AccordionContent>
            <div className="grid gap-2">
             <div className="flex items-center space-x-2">
-              <Checkbox id="cond-new" />
+              <Checkbox 
+                id="cond-new" 
+                checked={selectedConditions.includes('Nuevo')}
+                onCheckedChange={(checked) => onConditionChange('Nuevo', checked as boolean)}
+                />
               <Label htmlFor="cond-new">Nuevo</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <Checkbox id="cond-used" />
+              <Checkbox 
+                id="cond-used"
+                checked={selectedConditions.includes('Usado')}
+                onCheckedChange={(checked) => onConditionChange('Usado', checked as boolean)}
+              />
               <Label htmlFor="cond-used">Usado</Label>
             </div>
           </div>
@@ -89,8 +101,40 @@ const FilterSection = () => (
 
 
 export default function Home() {
-  const products = getProducts();
-  const categories = getCategories();
+  const allProducts = useMemo(() => getProducts(), []);
+  const categories = useMemo(() => getCategories(), []);
+  
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+
+  useEffect(() => {
+    const filtered = allProducts.filter(product => {
+      const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
+      const conditionMatch = selectedConditions.length === 0 || selectedConditions.includes(product.condition);
+      return categoryMatch && conditionMatch;
+    });
+    setFilteredProducts(filtered);
+  }, [selectedCategories, selectedConditions, allProducts]);
+
+  const handleCategoryChange = (id: string, checked: boolean) => {
+    setSelectedCategories(prev => 
+      checked ? [...prev, id] : prev.filter(catId => catId !== id)
+    );
+  };
+    
+  const handleConditionChange = (condition: string, checked: boolean) => {
+    setSelectedConditions(prev => 
+      checked ? [...prev, condition] : prev.filter(c => c !== condition)
+    );
+  };
+  
+  const scrollToProducts = () => {
+    const productsSection = document.getElementById('recent-products');
+    if (productsSection) {
+      productsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -102,8 +146,10 @@ export default function Home() {
                     <h1 className="text-4xl md:text-5xl font-bold leading-tight">Tijuana Shop</h1>
                     <p className="text-xl mt-2 mb-6">El súper mercado de segunda mano</p>
                     <div className="flex gap-4">
-                        <Button size="lg" className="bg-red-500 hover:bg-red-600">Ver Anuncios</Button>
-                        <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-teal-500">Registrarse</Button>
+                        <Button size="lg" className="bg-red-500 hover:bg-red-600" onClick={scrollToProducts}>Ver Anuncios</Button>
+                        <Link href="/auth?tab=register" passHref>
+                          <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-teal-500">Registrarse</Button>
+                        </Link>
                     </div>
                 </div>
                 <div className="md:w-1/2 relative h-64 md:h-auto">
@@ -120,11 +166,17 @@ export default function Home() {
 
         <div className="container mx-auto px-4 md:px-6 mt-8">
             <div className="flex flex-col md:flex-row gap-8">
-                <FilterSection />
-                <div className="w-full md:w-3/4 lg:w-4/5">
+                <FilterSection 
+                    categories={categories}
+                    selectedCategories={selectedCategories}
+                    onCategoryChange={handleCategoryChange}
+                    selectedConditions={selectedConditions}
+                    onConditionChange={handleConditionChange}
+                />
+                <div id="recent-products" className="w-full md:w-3/4 lg:w-4/5">
                     <h2 className="text-2xl font-bold tracking-tighter mb-6">Productos Recientes</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {products.map((product) => (
+                        {filteredProducts.map((product) => (
                             <ProductCard key={product.id} product={product} />
                         ))}
                     </div>

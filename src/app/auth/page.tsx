@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
@@ -271,12 +271,15 @@ function RegisterForm() {
 }
 
 export default function AuthPage() {
+    const searchParams = useSearchParams();
+    const defaultTab = searchParams.get('tab') || 'login';
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 dark:bg-zinc-900 p-4">
         <div className="mb-8">
             <Logo />
         </div>
-      <Tabs defaultValue="login" className="w-full max-w-md">
+      <Tabs defaultValue={defaultTab} className="w-full max-w-md">
         <TabsList className="grid w-full grid-cols-2 bg-zinc-200 dark:bg-zinc-800">
           <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
           <TabsTrigger value="register">Crear Cuenta</TabsTrigger>
