@@ -19,12 +19,13 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { getAuth, signOut } from 'firebase/auth';
 import { Input } from './ui/input';
 import { Loader2, Search } from 'lucide-react';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useEffect } from 'react';
 import { interpretSearchQuery } from '@/ai/flows/search-flow';
 
 function UserNav() {
     const { user, loading } = useUser();
     const auth = getAuth();
+    const router = useRouter();
 
     if (loading) {
         return <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />;
@@ -63,20 +64,23 @@ function UserNav() {
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                     <Link href={`/profile/${user.uid}`} className="w-full">Perfil</Link>
                 </DropdownMenuItem>
-                 <DropdownMenuItem>
+                 <DropdownMenuItem asChild>
                     <Link href="/account/messages" className="w-full">Mensajes</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                     <Link href="/account/listings" className="w-full">Mis Artículos</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                      <Link href="/account/favorites" className="w-full">Favoritos</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut(auth)}>
+                <DropdownMenuItem onClick={() => {
+                    signOut(auth);
+                    router.push('/');
+                }}>
                     Cerrar sesión
                 </DropdownMenuItem>
             </DropdownMenuContent>
@@ -89,6 +93,11 @@ function SearchBar() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const [isSearching, setIsSearching] = useState(false);
+    const [query, setQuery] = useState(searchParams.get('search') || '');
+
+    useEffect(() => {
+        setQuery(searchParams.get('search') || '');
+    }, [searchParams]);
 
     const handleSearch = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -114,10 +123,11 @@ function SearchBar() {
             }
         }
         
-        if (pathname !== '/') {
-            router.push(`/?${params.toString()}`);
+        const newUrl = `/?${params.toString()}`;
+        if (pathname === '/' ) {
+             router.replace(newUrl, { scroll: false });
         } else {
-            router.push(`?${params.toString()}`);
+             router.push(newUrl);
         }
         setIsSearching(false);
     }
@@ -132,7 +142,8 @@ function SearchBar() {
           <Input 
             name="search"
             placeholder="Busca con IA: 'iPhone nuevo por menos de 10000'"
-            defaultValue={searchParams.get('search') || ''}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             className="pl-9 w-full bg-zinc-100 dark:bg-zinc-800 focus:bg-background"
             disabled={isSearching}
           />
@@ -163,5 +174,3 @@ export function Header() {
     </header>
   );
 }
-
-    

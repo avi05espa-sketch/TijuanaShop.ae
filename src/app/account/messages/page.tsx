@@ -16,7 +16,7 @@ import { es } from 'date-fns/locale';
 
 function ChatListItem({ chat, currentUserId }: { chat: Chat; currentUserId: string }) {
     const otherUserId = chat.participants.find(p => p !== currentUserId);
-    if (!otherUserId) return null;
+    if (!otherUserId || !chat.participantDetails) return null;
 
     const otherUserDetails = chat.participantDetails[otherUserId];
     const lastMessageTimestamp = chat.lastMessage?.timestamp?.toDate();
@@ -26,7 +26,7 @@ function ChatListItem({ chat, currentUserId }: { chat: Chat; currentUserId: stri
             <div className="flex items-center gap-4 p-4">
                 <Avatar className="h-14 w-14 border">
                     <AvatarImage src={otherUserDetails?.avatar} alt={otherUserDetails?.name} />
-                    <AvatarFallback>{otherUserDetails?.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>{otherUserDetails?.name?.charAt(0) || 'U'}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 overflow-hidden">
                     <div className="flex justify-between items-start">
@@ -62,9 +62,11 @@ export default function MessagesPage() {
         }
 
         const fetchChats = async () => {
-            const userChats = await getChatsForUser(firestore, user.uid);
-            setChats(userChats);
-            setLoading(false);
+            if (firestore && user) {
+                const userChats = await getChatsForUser(firestore, user.uid);
+                setChats(userChats);
+                setLoading(false);
+            }
         };
 
         fetchChats();
@@ -85,18 +87,18 @@ export default function MessagesPage() {
             <main className="container mx-auto max-w-4xl px-0 py-8 md:py-12 md:px-4">
                 <Card>
                     <CardContent className="p-0">
-                         {loading ? (
+                         {loading || userLoading ? (
                             <div className="flex justify-center items-center h-64">
                                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
                             </div>
                         ) : chats.length > 0 ? (
                             <div className="divide-y">
                                 {chats.map(chat => (
-                                    <ChatListItem key={chat.id} chat={chat} currentUserId={user!.uid} />
+                                    user && <ChatListItem key={chat.id} chat={chat} currentUserId={user.uid} />
                                 ))}
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center justify-center h-64 text-center p-6">
+                            <div className="flex flex-col items-center justify-center h-96 text-center p-6">
                                 <MessageSquareText className="h-16 w-16 text-muted-foreground/50" />
                                 <h2 className="mt-6 text-xl font-semibold">No tienes mensajes</h2>
                                 <p className="mt-2 text-sm text-muted-foreground">
@@ -110,5 +112,3 @@ export default function MessagesPage() {
          </div>
     )
 }
-
-    

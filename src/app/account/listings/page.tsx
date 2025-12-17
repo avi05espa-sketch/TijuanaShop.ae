@@ -30,9 +30,11 @@ export default function MyListingsPage() {
         }
 
         const fetchUserProducts = async () => {
-            const userProducts = await getProducts(firestore, { sellerId: user.uid });
-            setProducts(userProducts);
-            setLoading(false);
+            if (firestore && user) {
+                const userProducts = await getProducts(firestore, { sellerId: user.uid });
+                setProducts(userProducts);
+                setLoading(false);
+            }
         };
 
         fetchUserProducts();
@@ -83,7 +85,7 @@ export default function MyListingsPage() {
                             </Button>
                         </CardContent>
                     </Card>
-                )}
+                )
             </main>
          </div>
     )

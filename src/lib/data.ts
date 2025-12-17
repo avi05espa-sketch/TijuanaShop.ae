@@ -12,7 +12,8 @@ import {
   limit,
   and,
   or,
-  updateDoc
+  updateDoc,
+  Timestamp,
 } from 'firebase/firestore';
 import type { Firestore } from 'firebase/firestore';
 import type { Product, Category, User, Chat, Message } from './types';
@@ -41,7 +42,7 @@ export async function getProducts(db: Firestore, {
   try {
     const productsRef = collection(db, "products");
     
-    const filters = [];
+    let filters = [];
 
     if (sellerId) {
         filters.push(where("sellerId", "==", sellerId));
@@ -93,7 +94,7 @@ export async function getProducts(db: Firestore, {
         location: data.location,
         sellerId: data.sellerId,
         images: data.images,
-        createdAt: data.createdAt.toDate().toISOString(),
+        createdAt: data.createdAt?.toDate().toISOString(),
       } as Product;
     });
     return products;
@@ -114,7 +115,7 @@ export async function getProduct(db: Firestore, id: string): Promise<Product | u
       return {
         id: docSnap.id,
         ...data,
-        createdAt: data.createdAt.toDate().toISOString(),
+        createdAt: data.createdAt?.toDate().toISOString(),
       } as Product;
     } else {
       console.log("No such product document!");
@@ -205,6 +206,10 @@ export async function getOrCreateChat(db: Firestore, userId1: string, userId2: s
         productTitle: productData.title,
         productImage: productData.images[0],
         createdAt: serverTimestamp(),
+        lastMessage: {
+          text: `Conversación iniciada sobre: ${productData.title}`,
+          timestamp: serverTimestamp()
+        }
     };
 
     const docRef = await addDoc(chatsRef, newChat);
@@ -217,7 +222,16 @@ export async function getChat(db: Firestore, chatId: string): Promise<Chat | und
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        return { id: docSnap.id, ...docSnap.data() } as Chat;
+        const data = docSnap.data();
+        return { 
+            id: docSnap.id, 
+            ...data,
+            lastMessage: {
+                text: data.lastMessage?.text,
+                timestamp: data.lastMessage?.timestamp as Timestamp
+            },
+            createdAt: data.createdAt as Timestamp
+        } as Chat;
     }
     return undefined;
 }
@@ -232,7 +246,21 @@ export async function getChatsForUser(db: Firestore, userId: string): Promise<Ch
     );
 
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Chat);
+    
+    const chats = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return { 
+            id: doc.id,
+            ...data,
+            lastMessage: {
+                text: data.lastMessage?.text,
+                timestamp: data.lastMessage?.timestamp as Timestamp
+            },
+            createdAt: data.createdAt as Timestamp
+        } as Chat;
+    });
+
+    return chats;
 }
 
 export async function sendMessage(db: Firestore, chatId: string, senderId: string, text: string) {
