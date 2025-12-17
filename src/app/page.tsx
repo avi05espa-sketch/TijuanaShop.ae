@@ -215,37 +215,37 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background font-body">
       <Header />
       <main className="flex-1">
-        <section className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white relative">
-            <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row items-center justify-between py-12 md:py-20">
-                <div className="md:w-1/2 mb-8 md:mb-0">
-                    <h1 className="text-4xl md:text-5xl font-bold leading-tight font-headline">Tijuana Shop</h1>
-                    <p className="text-xl mt-2 mb-6">El súper mercado de segunda mano</p>
+        <section className="w-full relative bg-primary/10">
+            <div className="container mx-auto px-4 md:px-6 grid md:grid-cols-2 items-center gap-8 py-12 md:py-20">
+                <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                    <h1 className="text-4xl md:text-5xl font-bold leading-tight font-headline text-primary-foreground bg-primary px-2 py-1">Tijuana Marketplace</h1>
+                    <p className="text-xl mt-4 mb-6 text-foreground/80 max-w-md">Tu mercado local para encontrar, comprar y vender artículos de segunda mano de forma segura y rápida.</p>
                     <div className="flex gap-4">
-                        <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90" onClick={scrollToProducts}>Ver Anuncios</Button>
+                        <Button size="lg" onClick={scrollToProducts}>Ver Anuncios</Button>
                         <Link href="/auth?tab=register" passHref>
-                          <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-primary">Registrarse</Button>
+                          <Button size="lg" variant="outline" className="text-primary border-primary hover:bg-primary hover:text-primary-foreground">Registrarse</Button>
                         </Link>
                     </div>
                 </div>
-                <div className="md:w-1/2 relative h-64 md:h-auto">
+                <div className="relative h-64 md:h-96 w-full">
                    <Image 
-                        src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                        alt="Persona comprando"
+                        src="https://picsum.photos/seed/marketplace/1200/800"
+                        alt="Mercado local en Tijuana"
                         fill
-                        className="object-cover rounded-lg"
-                        data-ai-hint="woman shopping"
+                        className="object-cover rounded-lg shadow-xl"
+                        data-ai-hint="local marketplace"
                     />
                 </div>
             </div>
         </section>
 
-        <div className="container mx-auto px-4 md:px-6 mt-8">
-            <div className="flex flex-col md:flex-row gap-8">
+        <div className="container mx-auto px-4 md:px-6 mt-12 mb-16">
+            <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
                 <FilterSection 
                     categories={categories}
                 />
                 <div id="recent-products" className="w-full md:w-3/4 lg:w-4/5">
-                    <h2 className="text-2xl font-bold tracking-tighter mb-6">Productos Recientes</h2>
+                    <h2 className="text-3xl font-bold tracking-tighter mb-6">Productos Recientes</h2>
                     {isLoading ? (
                       <ProductGridSkeleton />
                     ) : (
@@ -268,7 +268,7 @@ export default function Home() {
 
       <Link href="/sell" passHref>
         <Button
-          className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg bg-primary hover:bg-primary/90"
+          className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg"
           size="icon"
           aria-label="Publicar un Producto"
         >
@@ -278,5 +278,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
