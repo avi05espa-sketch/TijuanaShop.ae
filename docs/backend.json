@@ -1,0 +1,96 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Represents a user in the system.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The user's unique ID."
+        },
+        "name": {
+          "type": "string",
+          "description": "The user's full name."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        },
+        "profilePicture": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the user's profile picture."
+        },
+        "location": {
+          "type": "string",
+          "description": "The user's general location."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time the user was created."
+        }
+      },
+      "required": ["uid", "name", "email", "createdAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Represents a product listing in the marketplace.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "category": {
+          "type": "string"
+        },
+        "condition": {
+          "type": "string",
+          "enum": ["Nuevo", "Usado"]
+        },
+        "location": {
+          "type": "string"
+        },
+        "sellerId": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["title", "price", "category", "condition", "sellerId", "images", "createdAt"]
+    }
+  },
+  "auth": {
+    "providers": [
+      "google.com",
+      "password"
+    ]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Stores user profile information."
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Stores all product listings."
+    }
+  }
+}
