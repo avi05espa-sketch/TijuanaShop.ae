@@ -1,9 +1,11 @@
+import { collection, getDocs, doc, getDoc, query, where, orderBy } from 'firebase/firestore';
+import type { Firestore } from 'firebase/firestore';
 import type { Product, Category, User } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
 const getImage = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || '';
 
-const users: User[] = [
+const staticUsers: User[] = [
   {
     id: 'user-1',
     name: 'Ana García',
@@ -50,145 +52,99 @@ const categories: Category[] = [
   { id: 'otros', name: 'Otros' },
 ];
 
-const products: Product[] = [
-  {
-    id: 'prod-1',
-    title: 'Bicicleta de Montaña',
-    description: 'Bicicleta de montaña rodada 26, en excelentes condiciones. Perfecta para paseos en la ciudad y senderos ligeros.',
-    price: 2500,
-    category: 'otros',
-    condition: 'Usado',
-    location: 'Zona Centro',
-    sellerId: 'user-1',
-    images: [getImage('product-1'), getImage('product-1'), getImage('product-1')],
-    createdAt: '2023-11-10T12:00:00Z',
-  },
-  {
-    id: 'prod-2',
-    title: 'Sofá Moderno Gris',
-    description: 'Sofá de 3 plazas, color gris oscuro. Menos de un año de uso, muy cómodo y en perfecto estado. Ideal para sala de estar.',
-    price: 6000,
-    category: 'hogar',
-    condition: 'Usado',
-    location: 'Otay',
-    sellerId: 'user-2',
-    images: [getImage('product-2'), getImage('product-2')],
-    createdAt: '2023-11-09T18:45:00Z',
-  },
-  {
-    id: 'prod-3',
-    title: 'iPhone 14 Pro',
-    description: 'iPhone 14 Pro de 256GB, color morado. Liberado de fábrica. Incluye caja y cable original. Sin rayones.',
-    price: 18000,
-    category: 'electronica',
-    condition: 'Usado',
-    location: 'Playas de Tijuana',
-    sellerId: 'user-3',
-    images: [getImage('product-3')],
-    createdAt: '2023-11-09T15:20:00Z',
-  },
-  {
-    id: 'prod-4',
-    title: 'Chamarra de Piel',
-    description: 'Chamarra de piel para hombre, talla M. Estilo motociclista, color negro. Marca reconocida.',
-    price: 1200,
-    category: 'ropa',
-    condition: 'Nuevo',
-    location: 'La Mesa',
-    sellerId: 'user-4',
-    images: [getImage('product-4')],
-    createdAt: '2023-11-08T20:00:00Z',
-  },
-   {
-    id: 'prod-5',
-    title: 'Guitarra Acústica Yamaha',
-    description: 'Guitarra acústica marca Yamaha, modelo F310. Ideal para principiantes. Cuerdas nuevas y recién calibrada. Incluye funda.',
-    price: 1800,
-    category: 'otros',
-    condition: 'Usado',
-    location: 'Zona Centro',
-    sellerId: 'user-1',
-    images: [getImage('product-5')],
-    createdAt: '2023-11-07T11:00:00Z',
-  },
-  {
-    id: 'prod-6',
-    title: 'VW Sedán 1998',
-    description: 'Vocho clásico, modelo 1998. Motor en buen estado, detalles estéticos por el año. Papeles en regla.',
-    price: 45000,
-    category: 'autos',
-    condition: 'Usado',
-    location: 'Otay',
-    sellerId: 'user-2',
-    images: [getImage('product-6')],
-    createdAt: '2023-11-06T19:30:00Z',
-  },
-  {
-    id: 'prod-7',
-    title: 'Laptop Dell XPS 15',
-    description: 'Laptop Dell XPS 15, pantalla 4K, Core i7, 16GB RAM, 512GB SSD. Ideal para diseño y programación. En excelente estado.',
-    price: 22000,
-    category: 'electronica',
-    condition: 'Usado',
-    location: 'Playas de Tijuana',
-    sellerId: 'user-3',
-    images: [getImage('product-9')],
-    createdAt: '2023-11-05T10:15:00Z',
-  },
-  {
-    id: 'prod-8',
-    title: 'Refrigerador Mabe',
-    description: 'Refrigerador Mabe 11 pies cúbicos. Funcionando perfectamente, congela y enfría sin problemas. Pequeños detalles estéticos.',
-    price: 3500,
-    category: 'hogar',
-    condition: 'Usado',
-    location: 'La Mesa',
-    sellerId: 'user-4',
-    images: [getImage('product-7'), getImage('product-8')],
-    createdAt: '2023-11-04T16:00:00Z',
-  },
-];
+// --- Firestore Data Functions ---
 
-export function getProducts({
-  query,
+export async function getProducts(db: Firestore, {
   categories,
   conditions,
 }: {
-  query?: string;
   categories?: string[];
   conditions?: string[];
-} = {}): Product[] {
-  let filteredProducts = [...products];
+} = {}): Promise<Product[]> {
+  try {
+    const productsRef = collection(db, "products");
+    
+    let q = query(productsRef, orderBy("createdAt", "desc"));
 
-  if (categories && categories.length > 0) {
-    filteredProducts = filteredProducts.filter(p => categories.includes(p.category));
-  }
-  
-  if (conditions && conditions.length > 0) {
-    filteredProducts = filteredProducts.filter(p => conditions.includes(p.condition));
-  }
+    if (categories && categories.length > 0) {
+      q = query(q, where("category", "in", categories));
+    }
+    if (conditions && conditions.length > 0) {
+        q = query(q, where("condition", "in", conditions));
+    }
 
-  if (query) {
-    const lowercasedQuery = query.toLowerCase();
-    filteredProducts = filteredProducts.filter(p =>
-      p.title.toLowerCase().includes(lowercasedQuery) ||
-      p.description.toLowerCase().includes(lowercasedQuery)
-    );
+    const querySnapshot = await getDocs(q);
+    const products = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        category: data.category,
+        condition: data.condition,
+        location: data.location,
+        sellerId: data.sellerId,
+        images: data.images,
+        createdAt: data.createdAt.toDate().toISOString(),
+      } as Product;
+    });
+    return products;
+  } catch (error) {
+    console.error("Error fetching products from Firestore:", error);
+    return [];
   }
-  
-  return filteredProducts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
-export function getProduct(id: string): Product | undefined {
-  return products.find(p => p.id === id);
+export async function getProduct(db: Firestore, id: string): Promise<Product | undefined> {
+  try {
+    const docRef = doc(db, "products", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        createdAt: data.createdAt.toDate().toISOString(),
+      } as Product;
+    } else {
+      console.log("No such product document!");
+      return undefined;
+    }
+  } catch (error) {
+    console.error("Error fetching product from Firestore:", error);
+    return undefined;
+  }
 }
+
+// Still using static data for users until a full user profile system is built.
+export async function getUser(db: Firestore, id: string): Promise<User | undefined> {
+   try {
+    const docRef = doc(db, "users", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data
+      } as User;
+    } else {
+      // Fallback to static user for now
+      return staticUsers.find(u => u.id === id);
+    }
+  } catch (error) {
+    console.error("Error fetching user from Firestore:", error);
+    return staticUsers.find(u => u.id === id); // Fallback
+  }
+}
+
+
+// --- Static Data Functions (Legacy) ---
 
 export function getCategories(): Category[] {
   return categories;
-}
-
-export function getUser(id: string): User | undefined {
-  return users.find(u => u.id === id);
 }
 
 export function getCategory(id: string): Category | undefined {

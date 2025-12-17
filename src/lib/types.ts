@@ -20,8 +20,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  profilePicture: string;
-  location: string;
-  createdAt: string;
-  listings: string[];
+  profilePicture?: string;
+  location?: string;
+  createdAt: any; // Can be a server timestamp
+  listings?: string[];
 }

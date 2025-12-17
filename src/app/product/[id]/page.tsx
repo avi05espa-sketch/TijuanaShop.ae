@@ -1,7 +1,13 @@
-import { notFound } from 'next/navigation';
+
+"use client";
+
+import { useState, useEffect } from 'react';
+import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getProduct, getUser } from '@/lib/data';
+import type { Product, User } from '@/lib/types';
+import { useFirebase } from '@/firebase';
 import {
   Carousel,
   CarouselContent,
@@ -13,17 +19,96 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { MessageCircle, Phone, Heart, Share2 } from 'lucide-react';
+import { MessageCircle, Phone, Heart, Share2, Loader2 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default function ProductPage({ params }: { params: { id: string } }) {
-  const product = getProduct(params.id);
+function ProductSkeleton() {
+  return (
+    <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+        <div>
+            <Skeleton className="aspect-w-16 aspect-h-9 rounded-lg w-full h-[400px] md:h-[600px]" />
+        </div>
+        <div className="flex flex-col gap-6">
+            <div>
+                <Skeleton className="h-10 w-3/4" />
+                <Skeleton className="h-8 w-1/4 mt-4" />
+            </div>
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+            </div>
+            <Separator />
+            <div className="flex items-center gap-4">
+                <Skeleton className="h-14 w-14 rounded-full" />
+                <div className="space-y-2">
+                    <Skeleton className="h-5 w-32" />
+                    <Skeleton className="h-4 w-24" />
+                </div>
+            </div>
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+               <Skeleton className="h-12 w-full" />
+               <Skeleton className="h-12 w-full" />
+            </div>
+        </div>
+    </div>
+  )
+}
 
-  if (!product) {
-    notFound();
+export default function ProductPage() {
+  const { id } = useParams() as { id: string };
+  const { firestore } = useFirebase();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [seller, setSeller] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id || !firestore) return;
+
+    const fetchProductAndSeller = async () => {
+      setLoading(true);
+      const productData = await getProduct(firestore, id);
+      
+      if (!productData) {
+        notFound();
+        return;
+      }
+
+      setProduct(productData);
+
+      if (productData.sellerId) {
+        const sellerData = await getUser(firestore, productData.sellerId);
+        if (sellerData) {
+          setSeller(sellerData);
+        }
+      }
+      setLoading(false);
+    };
+
+    fetchProductAndSeller();
+  }, [id, firestore]);
+
+  if (loading) {
+    return (
+       <div className="flex flex-col min-h-screen">
+          <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+              <Button variant="outline" asChild>
+                <Link href="/">← Volver</Link>
+              </Button>
+            </div>
+          </header>
+          <main className="container mx-auto max-w-6xl px-4 py-8 md:py-12">
+            <ProductSkeleton />
+          </main>
+      </div>
+    )
   }
 
-  const seller = getUser(product.sellerId);
+  if (!product) {
+    return notFound();
+  }
 
   return (
     <div className="flex flex-col min-h-screen">

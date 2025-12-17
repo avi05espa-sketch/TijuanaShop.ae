@@ -9,6 +9,7 @@ import {
   Shirt,
   Blocks,
   Plus,
+  Loader2,
 } from "lucide-react";
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import { ProductCard } from "@/components/product-card";
 import { Header } from "@/components/header";
 import { getProducts, getCategories } from "@/lib/data";
 import type { Category, Product } from "@/lib/types";
+import { useFirebase } from "@/firebase";
 import {
   Accordion,
   AccordionContent,
@@ -101,21 +103,27 @@ const FilterSection = ({
 
 
 export default function Home() {
-  const allProducts = useMemo(() => getProducts(), []);
+  const { firestore } = useFirebase();
   const categories = useMemo(() => getCategories(), []);
   
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(allProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
 
   useEffect(() => {
-    const filtered = allProducts.filter(product => {
-      const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(product.category);
-      const conditionMatch = selectedConditions.length === 0 || selectedConditions.includes(product.condition);
-      return categoryMatch && conditionMatch;
-    });
-    setFilteredProducts(filtered);
-  }, [selectedCategories, selectedConditions, allProducts]);
+    const fetchProducts = async () => {
+      setIsLoading(true);
+      const fetchedProducts = await getProducts(firestore, { 
+          categories: selectedCategories, 
+          conditions: selectedConditions 
+      });
+      setProducts(fetchedProducts);
+      setIsLoading(false);
+    };
+
+    fetchProducts();
+  }, [firestore, selectedCategories, selectedConditions]);
 
   const handleCategoryChange = (id: string, checked: boolean) => {
     setSelectedCategories(prev => 
@@ -175,11 +183,17 @@ export default function Home() {
                 />
                 <div id="recent-products" className="w-full md:w-3/4 lg:w-4/5">
                     <h2 className="text-2xl font-bold tracking-tighter mb-6">Productos Recientes</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {filteredProducts.map((product) => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
-                    </div>
+                    {isLoading ? (
+                      <div className="flex justify-center items-center h-64">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                          {products.map((product) => (
+                              <ProductCard key={product.id} product={product} />
+                          ))}
+                      </div>
+                    )}
                 </div>
             </div>
         </div>
