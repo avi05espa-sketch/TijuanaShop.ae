@@ -27,17 +27,22 @@ export async function getProducts(db: Firestore, {
   categories,
   conditions,
   searchTerm,
+  sellerId,
 }: {
   categories?: string[];
   conditions?: string[];
   searchTerm?: string;
+  sellerId?: string;
 } = {}): Promise<Product[]> {
   try {
     const productsRef = collection(db, "products");
     
-    let q = query(productsRef, orderBy("createdAt", "desc"));
-
+    let q;
     const filters = [];
+
+    if (sellerId) {
+        filters.push(where("sellerId", "==", sellerId));
+    }
     if (categories && categories.length > 0) {
       filters.push(where("category", "in", categories));
     }
@@ -56,10 +61,14 @@ export async function getProducts(db: Firestore, {
       );
     }
 
-    if (filters.length > 0 && !searchTerm) {
-      q = query(productsRef, orderBy("createdAt", "desc"), and(...filters));
+    if (filters.length > 0) {
+        q = query(productsRef, orderBy("createdAt", "desc"), and(...filters));
+    } else if (!searchTerm) {
+        q = query(productsRef, orderBy("createdAt", "desc"));
     }
     
+
+    if (!q) return []; // If no query is built, return empty array
 
     const querySnapshot = await getDocs(q);
     const products = querySnapshot.docs.map(doc => {

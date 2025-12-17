@@ -127,7 +127,9 @@ export default function Home() {
       setIsLoading(false);
     };
 
-    fetchProducts();
+    if (firestore) {
+        fetchProducts();
+    }
   }, [firestore, selectedCategories, selectedConditions, searchParams]);
 
   const handleCategoryChange = (id: string, checked: boolean) => {
