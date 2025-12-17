@@ -8,10 +8,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Logo } from "@/components/logo";
+import { Logo }s from "@/components/logo";
 import { useToast } from "@/hooks/use-toast";
 import { useFirebase } from "@/firebase";
 import { FirebaseError } from "firebase/app";
+
+// Approximate coordinates for Tijuana and a radius for checking
+const TIJUANA_COORDS = { latitude: 32.5149, longitude: -117.0382 };
+const MAX_DISTANCE_KM = 25; // 25km radius from the center
+
+function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 export default function LoginPage() {
   const { app } = useFirebase();
@@ -22,32 +38,77 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const checkLocationAndLogin = async () => {
     setIsLoading(true);
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      toast({ title: "¡Bienvenido de nuevo!" });
-      router.push("/");
-    } catch (error) {
-      console.error(error);
-      let description = "Ocurrió un error inesperado.";
-      if (error instanceof FirebaseError) {
-        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-          description = "Correo o contraseña incorrectos.";
-        }
-      }
+    if (!navigator.geolocation) {
       toast({
         variant: "destructive",
-        title: "Error al iniciar sesión",
-        description,
+        title: "Geolocalización no soportada",
+        description: "Tu navegador no soporta la geolocalización.",
       });
-    } finally {
       setIsLoading(false);
+      return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const distance = getDistance(latitude, longitude, TIJUANA_COORDS.latitude, TIJUANA_COORDS.longitude);
+
+        if (distance > MAX_DISTANCE_KM) {
+          toast({
+            variant: "destructive",
+            title: "Ubicación no permitida",
+            description: "Debes estar en Tijuana para iniciar sesión.",
+          });
+          setIsLoading(false);
+          return;
+        }
+        
+        // Location is valid, proceed with login
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+          toast({ title: "¡Bienvenido de nuevo!" });
+          router.push("/");
+        } catch (error) {
+          console.error(error);
+          let description = "Ocurrió un error inesperado.";
+          if (error instanceof FirebaseError) {
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+              description = "Correo o contraseña incorrectos.";
+            }
+          }
+          toast({
+            variant: "destructive",
+            title: "Error al iniciar sesión",
+            description,
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        toast({
+          variant: "destructive",
+          title: "Error de ubicación",
+          description: "No se pudo obtener tu ubicación. Por favor, activa los permisos de ubicación en tu navegador.",
+        });
+        setIsLoading(false);
+      },
+      { enableHighAccuracy: true }
+    );
+  };
+
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await checkLocationAndLogin();
   };
 
   const handleGoogleSignIn = async () => {
+    // Note: You might want to implement location check for Google Sign-In as well.
+    // For simplicity, we'll proceed directly for now.
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
@@ -106,7 +167,7 @@ export default function LoginPage() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Iniciando..." : "Iniciar Sesión"}
+              {isLoading ? "Verificando..." : "Iniciar Sesión"}
             </Button>
           </form>
           <div className="relative my-4">
