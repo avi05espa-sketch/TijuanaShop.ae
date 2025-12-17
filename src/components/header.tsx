@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
 import { MobileSheet } from './mobile-sheet';
-import { useUser } from '@/firebase';
+import { useUser, useFirebase, useFirestore } from '@/firebase';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,14 +18,46 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { getAuth, signOut } from 'firebase/auth';
 import { Input } from './ui/input';
-import { Loader2, Search } from 'lucide-react';
+import { Loader2, Search, Shield } from 'lucide-react';
 import { FormEvent, useState, useEffect } from 'react';
 import { interpretSearchQuery } from '@/ai/flows/search-flow';
+import { getUser } from '@/lib/data';
+import type { User } from '@/lib/types';
+
 
 function UserNav() {
     const { user, loading } = useUser();
+    const { firestore } = useFirebase();
+    const [isAdmin, setIsAdmin] = useState(false);
     const auth = getAuth();
     const router = useRouter();
+
+     useEffect(() => {
+        const checkAdmin = async () => {
+            if (user && firestore) {
+                // For development, we can hardcode an admin UID.
+                // In production, this check should be more robust, relying on custom claims.
+                // This is a temporary measure for UI development.
+                const adminUID = "s0O2t5yTLYh4VnSgxjS13iK1xay1"; // Replace with a real Admin UID for testing
+                if (user.uid === adminUID) {
+                    setIsAdmin(true);
+                    return;
+                }
+                
+                // Fetch user document to check role
+                const userDoc = await getUser(firestore, user.uid);
+                if (userDoc?.role === 'admin') {
+                    setIsAdmin(true);
+                } else {
+                    setIsAdmin(false);
+                }
+            }
+        };
+
+        if (!loading) {
+            checkAdmin();
+        }
+    }, [user, firestore, loading]);
 
     if (loading) {
         return <div className="h-9 w-9 rounded-full bg-muted animate-pulse" />;
@@ -76,6 +108,17 @@ function UserNav() {
                 <DropdownMenuItem>
                      <Link href="/account/favorites" className="w-full">Favoritos</Link>
                 </DropdownMenuItem>
+                {isAdmin && (
+                    <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                        <Link href="/admin">
+                            <Shield className="mr-2 h-4 w-4" />
+                            <span>Panel de Admin</span>
+                        </Link>
+                    </DropdownMenuItem>
+                    </>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => {
                     signOut(auth);

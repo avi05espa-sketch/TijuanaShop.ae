@@ -47,9 +47,14 @@
         "ratingCount": {
             "type": "number",
             "description": "The total number of ratings the user has received."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "admin"],
+          "description": "The user's role in the system."
         }
       },
-      "required": ["uid", "name", "email", "createdAt"]
+      "required": ["uid", "name", "email", "createdAt", "role"]
     },
     "Product": {
       "title": "Product",

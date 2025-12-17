@@ -412,6 +412,7 @@ export function createUserProfile(db: Firestore, userId: string, userData: Omit<
     const newUserProfile = {
         uid: userId,
         ...userData,
+        role: 'user', // Default role for new users
         createdAt: serverTimestamp(),
     };
     

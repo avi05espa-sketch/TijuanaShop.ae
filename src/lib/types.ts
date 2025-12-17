@@ -30,6 +30,7 @@ export interface User {
   favorites?: string[];
   rating?: number;
   ratingCount?: number;
+  role?: 'user' | 'admin';
 }
 
 
