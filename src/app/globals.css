@@ -10,19 +10,19 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 195 85% 41%; /* Vibrant Blue */
-    --primary-foreground: 210 40% 98%;
+    --primary: 173 80% 36%; /* Teal */
+    --primary-foreground: 180 10% 98%;
     --secondary: 220 13% 91%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 220 9% 46%;
     --muted-foreground: 220 9% 46%;
-    --accent: 330 80% 55%; /* Magenta/Pink from logo */
+    --accent: 322 81% 59%; /* Magenta/Pink */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 220 13% 89%;
     --input: 220 13% 89%;
-    --ring: 195 85% 41%;
+    --ring: 173 80% 36%;
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -38,19 +38,19 @@
     --card-foreground: 210 40% 98%;
     --popover: 220 13% 10%;
     --popover-foreground: 210 40% 98%;
-    --primary: 195 75% 55%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 173 70% 48%;
+    --primary-foreground: 180 10% 98%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 330 70% 65%;
+    --accent: 322 71% 69%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 25%;
     --input: 217.2 32.6% 25%;
-    --ring: 195 75% 55%;
+    --ring: 173 70% 48%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;

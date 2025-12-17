@@ -164,13 +164,13 @@ export function Header() {
         </div>
         
         <div className="flex-1 flex justify-center px-4">
-            {/* <SearchBar /> */}
+            <SearchBar />
         </div>
 
         <div className="flex items-center gap-2">
           <div className="hidden md:flex items-center gap-4 text-sm font-medium">
-            <Link href="#" className="text-muted-foreground hover:text-primary">Inicio</Link>
-            <Link href="#" className="text-muted-foreground hover:text-primary">Anuncios</Link>
+            <Link href="/" className="text-muted-foreground hover:text-primary">Inicio</Link>
+            <Link href="/" className="text-muted-foreground hover:text-primary">Anuncios</Link>
             <Link href="/sell" className="text-muted-foreground hover:text-primary">Vende</Link>
           </div>
           <UserNav />
