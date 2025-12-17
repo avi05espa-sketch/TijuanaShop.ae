@@ -2,13 +2,13 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useRouter, notFound } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useFirebase, useUser } from '@/firebase';
 import { getChat, sendMessage } from '@/lib/data';
-import { collection, query, orderBy, onSnapshot, Timestamp, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import type { Chat, Message, User as ChatUser } from '@/lib/types';
+import { collection, query, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
+import type { Chat, Message } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -110,8 +110,6 @@ export default function ChatPage() {
             try {
                 const chatData = await getChat(firestore, chatId);
                 if (!chatData || !chatData.participants.includes(currentUser.uid)) {
-                    // This will be caught by notFound() from Next.js if it's a server component,
-                    // but since it's a client component, we should handle it gracefully.
                     toast({ variant: 'destructive', title: 'Error', description: 'Chat no encontrado o no tienes permiso para verlo.'})
                     router.push('/account/messages');
                     return;
@@ -140,6 +138,8 @@ export default function ChatPage() {
             }, 
             (error) => {
                 console.error("Error listening to messages:", error);
+                // The error will be caught by the global listener, but we can also log a specific error here
+                // or update local state to show a UI error.
                 errorEmitter.emit('permission-error', new FirestorePermissionError({
                     path: messagesRef.path,
                     operation: 'list',
@@ -152,14 +152,14 @@ export default function ChatPage() {
 
     }, [firestore, chatId, currentUser, toast, router]);
     
-    const handleSendMessage = async (e: React.FormEvent) => {
+    const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();
         if (!firestore || !chatId || !currentUser || !newMessage.trim()) return;
         
         const textToSend = newMessage.trim();
         setNewMessage("");
 
-        // The sendMessage function is now fire-and-forget from the UI perspective.
+        // This function is now fire-and-forget from the UI perspective.
         // It handles its own errors via the errorEmitter.
         sendMessage(firestore, chatId, currentUser.uid, textToSend);
         
@@ -226,3 +226,5 @@ export default function ChatPage() {
         </div>
     );
 }
+
+    

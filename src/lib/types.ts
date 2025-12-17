@@ -19,13 +19,12 @@ export interface Category {
 
 export interface User {
   id: string;
-  uid?: string; // Keep uid for firebase auth consistency
+  uid: string;
   name: string;
   email: string;
   profilePicture?: string;
   location?: string;
   createdAt: any; // Can be a server timestamp
-  listings?: string[];
   favorites?: string[];
   rating?: number;
   ratingCount?: number;
@@ -60,4 +59,5 @@ export interface Message {
     timestamp: any;
 }
 
+    
     

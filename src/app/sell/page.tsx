@@ -57,7 +57,6 @@ export default function SellPage() {
     setIsSubmitting(true);
     
     try {
-      // For now, we are not handling image uploads, just storing mock URLs.
       const imageUrls = Array.from(images).map((file, index) => `https://picsum.photos/seed/${user.uid}-${Date.now()}-${index}/600/400`);
 
       const productData: Omit<Product, 'id' | 'createdAt'> = {
@@ -70,7 +69,8 @@ export default function SellPage() {
         sellerId: user.uid,
         images: imageUrls,
       };
-
+      
+      // The addProduct function now handles its own permission errors via the emitter.
       const docRef = await addProduct(firestore, productData);
 
       toast({
@@ -83,11 +83,12 @@ export default function SellPage() {
     } catch (error) {
       console.error("Error publishing product:", error);
       // The specific error toast is now handled by the error emitter,
-      // but we can show a generic one here as a fallback.
+      // but we can show a generic one here as a fallback in case the
+      // error is not a permission error.
       toast({
         variant: "destructive",
         title: "Error al publicar",
-        description: "Hubo un problema al guardar tu producto. Revisa los permisos e inténtalo de nuevo.",
+        description: "Hubo un problema al guardar tu producto. Inténtalo de nuevo.",
       });
     } finally {
       setIsSubmitting(false);
@@ -231,3 +232,5 @@ export default function SellPage() {
     </div>
   );
 }
+
+    

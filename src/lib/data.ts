@@ -23,7 +23,7 @@ import type { Firestore } from 'firebase/firestore';
 import type { Product, Category, User, Chat, Message } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError } from '@/firebase/errors';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 const getImage = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || '';
 
@@ -206,7 +206,7 @@ export async function getOrCreateChat(db: Firestore, userId1: string, userId2: s
         throw new Error("Could not find user or product to create chat.");
     }
 
-    const newChatData: Omit<Chat, 'id'> = {
+    const newChatData = {
         participants: [userId1, userId2],
         participantDetails: {
             [userId1]: { name: user1Data.name, avatar: user1Data.profilePicture || '' },
@@ -228,7 +228,7 @@ export async function getOrCreateChat(db: Firestore, userId1: string, userId2: s
                 path: chatsRef.path,
                 operation: 'create',
                 requestResourceData: newChatData,
-            }));
+            } satisfies SecurityRuleContext));
             throw error;
         });
 
@@ -300,8 +300,7 @@ export function sendMessage(db: Firestore, chatId: string, senderId: string, tex
             path: messagesRef.path,
             operation: 'create',
             requestResourceData: newMessage,
-        }));
-        // We don't re-throw here so the UI doesn't crash on permission errors
+        } satisfies SecurityRuleContext));
     });
 
     const chatUpdate = {
@@ -316,7 +315,7 @@ export function sendMessage(db: Firestore, chatId: string, senderId: string, tex
             path: chatRef.path,
             operation: 'update',
             requestResourceData: chatUpdate,
-        }));
+        } satisfies SecurityRuleContext));
     });
 }
 
@@ -337,13 +336,12 @@ export async function toggleFavorite(db: Firestore, userId: string, productId: s
         ? { favorites: arrayRemove(productId) }
         : { favorites: arrayUnion(productId) };
 
-    updateDoc(userRef, updateData).catch(error => {
+    await updateDoc(userRef, updateData).catch(error => {
         errorEmitter.emit('permission-error', new FirestorePermissionError({
             path: userRef.path,
             operation: 'update',
             requestResourceData: updateData
-        }));
-        // Re-throw so the UI can know the operation failed
+        } satisfies SecurityRuleContext));
         throw error;
     });
 
@@ -370,7 +368,7 @@ export async function getFavoriteProducts(db: Firestore, userId: string): Promis
     return products;
 }
 
-// New function to add a product, with error handling
+// Updated function to add a product, with structured error handling
 export function addProduct(db: Firestore, productData: Omit<Product, 'id' | 'createdAt'>) {
     const productsRef = collection(db, "products");
     const newProductData = {
@@ -378,34 +376,38 @@ export function addProduct(db: Firestore, productData: Omit<Product, 'id' | 'cre
         createdAt: serverTimestamp(),
     };
     
+    // Return the promise from addDoc
     return addDoc(productsRef, newProductData)
         .catch((error) => {
             errorEmitter.emit('permission-error', new FirestorePermissionError({
                 path: productsRef.path,
                 operation: 'create',
                 requestResourceData: newProductData,
-            }));
-            // Re-throw so the UI can handle the submission failure
+            } satisfies SecurityRuleContext));
+            // Re-throw so the calling UI can handle the submission failure
             throw error;
         });
 }
 
-// New function to create a user document, with error handling
-export function createUserProfile(db: Firestore, userId: string, userData: Omit<User, 'id' | 'createdAt'>) {
+// Updated function to create a user profile, with structured error handling
+export function createUserProfile(db: Firestore, userId: string, userData: Omit<User, 'id' | 'createdAt' | 'uid'>) {
     const userRef = doc(db, 'users', userId);
     const newUserProfile = {
+        uid: userId,
         ...userData,
         createdAt: serverTimestamp(),
     };
     
-    // Use setDoc with merge:true to avoid overwriting if it somehow already exists
+    // Return the promise from setDoc
     return setDoc(userRef, newUserProfile, { merge: true })
         .catch(error => {
             errorEmitter.emit('permission-error', new FirestorePermissionError({
                 path: userRef.path,
                 operation: 'create',
                 requestResourceData: newUserProfile,
-            }));
+            } satisfies SecurityRuleContext));
             throw error;
         });
 }
+
+    

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -195,16 +195,19 @@ function RegisterForm() {
       await updateProfile(user, { displayName: fullName });
       
       const userProfileData = {
-        uid: user.uid,
         name: fullName,
         email: user.email!,
         profilePicture: user.photoURL || `https://picsum.photos/seed/${user.uid}/400/400`,
         location: "Tijuana",
+        rating: 0,
+        ratingCount: 0,
+        favorites: [],
       };
-
+      
+      // This function now handles its own permission errors via the emitter.
       await createUserProfile(db, user.uid, userProfileData);
 
-      toast({ title: "¡Cuenta creada!", description: "Ahora puedes iniciar sesión." });
+      toast({ title: "¡Cuenta creada!", description: "Tu cuenta ha sido creada exitosamente." });
       router.push("/");
     } catch (error) {
       console.error(error);
@@ -305,3 +308,5 @@ export default function AuthPage() {
     </div>
   );
 }
+
+    
