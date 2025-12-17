@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import {
   Sheet,
@@ -16,25 +17,37 @@ import {
   Settings,
   HelpCircle,
   LogOut,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 import { Logo } from './logo';
 import { Separator } from './ui/separator';
-
-const menuItems = [
-  { href: '/', label: 'Inicio', icon: Home },
-  { href: '/account/profile', label: 'Perfil', icon: User },
-  { href: '/account/listings', label: 'Mis publicaciones', icon: LayoutGrid },
-  { href: '/account/messages', label: 'Mensajes', icon: MessageSquare },
-  { href: '/account/favorites', label: 'Favoritos', icon: Heart },
-];
-
-const secondaryMenuItems = [
-  { href: '/account/settings', label: 'Ajustes', icon: Settings },
-  { href: '/help', label: 'Ayuda', icon: HelpCircle },
-  { href: '/login', label: 'Cerrar sesión', icon: LogOut },
-];
+import { useUser } from '@/firebase';
+import { getAuth, signOut } from 'firebase/auth';
 
 export function MobileSheet() {
+    const { user, loading } = useUser();
+    const auth = getAuth();
+
+  const menuItems = [
+    { href: '/', label: 'Inicio', icon: Home, requiresAuth: false },
+    { href: user ? `/profile/${user.uid}` : '/auth', label: 'Perfil', icon: User, requiresAuth: true },
+    { href: '/account/listings', label: 'Mis publicaciones', icon: LayoutGrid, requiresAuth: true },
+    { href: '/account/messages', label: 'Mensajes', icon: MessageSquare, requiresAuth: true },
+    { href: '/account/favorites', label: 'Favoritos', icon: Heart, requiresAuth: true },
+  ];
+
+  const secondaryMenuItems = [
+    { href: '/account/settings', label: 'Ajustes', icon: Settings },
+    { href: '/help', label: 'Ayuda', icon: HelpCircle },
+  ];
+
+  const authMenuItems = [
+      { href: '/auth', label: 'Iniciar Sesión', icon: LogIn },
+      { href: '/auth?tab=register', label: 'Crear Cuenta', icon: UserPlus },
+  ]
+
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -43,13 +56,13 @@ export function MobileSheet() {
           <span className="sr-only">Abrir menú</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="flex flex-col w-72 sm:w-80">
+      <SheetContent side="left" className="flex flex-col w-72 sm:w-80 p-0">
         <div className="p-4">
           <Logo />
         </div>
         <Separator />
-        <nav className="flex-1 px-2 py-4 space-y-2">
-          {menuItems.map(({ href, label, icon: Icon }) => (
+        <nav className="flex-1 px-2 py-4 space-y-1">
+          {menuItems.filter(item => !item.requiresAuth || !!user).map(({ href, label, icon: Icon }) => (
             <SheetClose asChild key={label}>
               <Link href={href} passHref>
                 <Button
@@ -64,7 +77,7 @@ export function MobileSheet() {
           ))}
         </nav>
         <Separator />
-        <div className="px-2 py-4 space-y-2">
+        <div className="px-2 py-4 space-y-1">
           {secondaryMenuItems.map(({ href, label, icon: Icon }) => (
              <SheetClose asChild key={label}>
                 <Link href={href} passHref>
@@ -78,8 +91,36 @@ export function MobileSheet() {
                 </Link>
               </SheetClose>
           ))}
+           {user ? (
+                 <SheetClose asChild>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-base"
+                        onClick={() => signOut(auth)}
+                    >
+                        <LogOut className="mr-4 h-5 w-5" />
+                        Cerrar sesión
+                    </Button>
+                 </SheetClose>
+            ) : (
+                authMenuItems.map(({ href, label, icon: Icon }) => (
+                     <SheetClose asChild key={label}>
+                        <Link href={href} passHref>
+                        <Button
+                            variant="ghost"
+                            className="w-full justify-start text-base"
+                        >
+                            <Icon className="mr-4 h-5 w-5" />
+                            {label}
+                        </Button>
+                        </Link>
+                    </SheetClose>
+                ))
+            )}
         </div>
       </SheetContent>
     </Sheet>
   );
 }
+
+    

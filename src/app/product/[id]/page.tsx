@@ -2,12 +2,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getProduct, getUser } from '@/lib/data';
+import { getProduct, getUser, getOrCreateChat } from '@/lib/data';
 import type { Product, User } from '@/lib/types';
-import { useFirebase } from '@/firebase';
+import { useFirebase, useUser as useAuthUser } from '@/firebase';
 import {
   Carousel,
   CarouselContent,
@@ -22,6 +22,7 @@ import { Separator } from '@/components/ui/separator';
 import { MessageCircle, Phone, Heart, Share2, Loader2 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 function ProductSkeleton() {
   return (
@@ -59,9 +60,14 @@ function ProductSkeleton() {
 export default function ProductPage() {
   const { id } = useParams() as { id: string };
   const { firestore } = useFirebase();
+  const { user: currentUser } = useAuthUser();
+  const router = useRouter();
+  const { toast } = useToast();
+
   const [product, setProduct] = useState<Product | null>(null);
   const [seller, setSeller] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isChatting, setIsChatting] = useState(false);
 
   useEffect(() => {
     if (!id || !firestore) return;
@@ -88,6 +94,44 @@ export default function ProductPage() {
 
     fetchProductAndSeller();
   }, [id, firestore]);
+
+  const handleSendMessage = async () => {
+    if (!currentUser) {
+      toast({
+        variant: "destructive",
+        title: "Inicia sesión",
+        description: "Debes iniciar sesión para enviar un mensaje."
+      });
+      router.push('/auth');
+      return;
+    }
+
+    if (!product || !seller) return;
+    
+    if (currentUser.uid === seller.id) {
+        toast({
+            variant: "destructive",
+            title: "Es tu propio producto",
+            description: "No puedes enviarte un mensaje a ti mismo."
+        });
+        return;
+    }
+
+    setIsChatting(true);
+    try {
+      const chatId = await getOrCreateChat(firestore, currentUser.uid, seller.id, product.id);
+      router.push(`/chat/${chatId}`);
+    } catch (error) {
+      console.error("Error creating or getting chat:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo iniciar el chat. Inténtalo de nuevo."
+      });
+      setIsChatting(false);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -195,8 +239,9 @@ export default function ProductPage() {
             )}
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-               <Button size="lg" className="h-12 text-lg">
-                <MessageCircle className="mr-2 h-6 w-6" /> Enviar mensaje
+               <Button size="lg" className="h-12 text-lg" onClick={handleSendMessage} disabled={isChatting}>
+                {isChatting ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : <MessageCircle className="mr-2 h-6 w-6" />}
+                 Enviar mensaje
               </Button>
               <Button size="lg" variant="outline" className="h-12 text-lg">
                 <Phone className="mr-2 h-6 w-6" /> Llamar
@@ -208,3 +253,5 @@ export default function ProductPage() {
     </div>
   );
 }
+
+    

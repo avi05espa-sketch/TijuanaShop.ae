@@ -1,77 +1,64 @@
-import { collection, getDocs, doc, getDoc, query, where, orderBy } from 'firebase/firestore';
+
+import { 
+  collection, 
+  getDocs, 
+  doc, 
+  getDoc, 
+  query, 
+  where, 
+  orderBy,
+  addDoc,
+  serverTimestamp,
+  limit,
+  and,
+  or
+} from 'firebase/firestore';
 import type { Firestore } from 'firebase/firestore';
-import type { Product, Category, User } from './types';
+import type { Product, Category, User, Chat, Message } from './types';
 import { PlaceHolderImages } from './placeholder-images';
 
 const getImage = (id: string) => PlaceHolderImages.find(img => img.id === id)?.imageUrl || '';
 
-const staticUsers: User[] = [
-  {
-    id: 'user-1',
-    name: 'Ana García',
-    email: 'ana.garcia@example.com',
-    profilePicture: getImage('user-1'),
-    location: 'Zona Centro, Tijuana',
-    createdAt: '2023-10-01T10:00:00Z',
-    listings: ['prod-1', 'prod-5']
-  },
-  {
-    id: 'user-2',
-    name: 'Carlos Martinez',
-    email: 'carlos.martinez@example.com',
-    profilePicture: getImage('user-2'),
-    location: 'Otay, Tijuana',
-    createdAt: '2023-09-15T14:30:00Z',
-    listings: ['prod-2', 'prod-6', 'prod-10']
-  },
-  {
-    id: 'user-3',
-    name: 'Sofia Rodriguez',
-    email: 'sofia.r@example.com',
-    profilePicture: getImage('user-3'),
-    location: 'Playas de Tijuana, Tijuana',
-    createdAt: '2023-11-05T18:00:00Z',
-    listings: ['prod-3', 'prod-7', 'prod-11']
-  },
-    {
-    id: 'user-4',
-    name: 'Javier Hernandez',
-    email: 'j.hernandez@example.com',
-    profilePicture: getImage('user-4'),
-    location: 'La Mesa, Tijuana',
-    createdAt: '2023-08-20T09:00:00Z',
-    listings: ['prod-4', 'prod-8', 'prod-9', 'prod-12']
-  },
-];
-
-const categories: Category[] = [
-  { id: 'autos', name: 'Autos' },
-  { id: 'electronica', name: 'Electrónica' },
-  { id: 'hogar', name: 'Hogar' },
-  { id: 'ropa', name: 'Ropa' },
-  { id: 'otros', name: 'Otros' },
-];
 
 // --- Firestore Data Functions ---
 
 export async function getProducts(db: Firestore, {
   categories,
   conditions,
+  searchTerm,
 }: {
   categories?: string[];
   conditions?: string[];
+  searchTerm?: string;
 } = {}): Promise<Product[]> {
   try {
     const productsRef = collection(db, "products");
     
     let q = query(productsRef, orderBy("createdAt", "desc"));
 
+    const filters = [];
     if (categories && categories.length > 0) {
-      q = query(q, where("category", "in", categories));
+      filters.push(where("category", "in", categories));
     }
     if (conditions && conditions.length > 0) {
-        q = query(q, where("condition", "in", conditions));
+        filters.push(where("condition", "in", conditions));
     }
+     if (searchTerm) {
+      // Firestore doesn't support full-text search natively on multiple fields.
+      // A more robust solution would use a dedicated search service like Algolia or Elasticsearch.
+      // For this app, we will do a simple "startsWith" on the title.
+      q = query(productsRef, 
+        where('title', '>=', searchTerm),
+        where('title', '<=', searchTerm + '\uf8ff'),
+        orderBy("title"), 
+        orderBy("createdAt", "desc")
+      );
+    }
+
+    if (filters.length > 0 && !searchTerm) {
+      q = query(q, ...filters);
+    }
+    
 
     const querySnapshot = await getDocs(q);
     const products = querySnapshot.docs.map(doc => {
@@ -118,7 +105,7 @@ export async function getProduct(db: Firestore, id: string): Promise<Product | u
   }
 }
 
-// Still using static data for users until a full user profile system is built.
+
 export async function getUser(db: Firestore, id: string): Promise<User | undefined> {
    try {
     const docRef = doc(db, "users", id);
@@ -131,17 +118,24 @@ export async function getUser(db: Firestore, id: string): Promise<User | undefin
         ...data
       } as User;
     } else {
-      // Fallback to static user for now
-      return staticUsers.find(u => u.id === id);
+      return undefined;
     }
   } catch (error) {
     console.error("Error fetching user from Firestore:", error);
-    return staticUsers.find(u => u.id === id); // Fallback
+    return undefined;
   }
 }
 
 
-// --- Static Data Functions (Legacy) ---
+// --- Static Data Functions ---
+
+const categories: Category[] = [
+  { id: 'autos', name: 'Autos' },
+  { id: 'electronica', name: 'Electrónica' },
+  { id: 'hogar', name: 'Hogar' },
+  { id: 'ropa', name: 'Ropa' },
+  { id: 'otros', name: 'Otros' },
+];
 
 export function getCategories(): Category[] {
   return categories;
@@ -150,3 +144,98 @@ export function getCategories(): Category[] {
 export function getCategory(id: string): Category | undefined {
     return categories.find(c => c.id === id);
 }
+
+// --- Chat Functions ---
+
+export async function getOrCreateChat(db: Firestore, userId1: string, userId2: string, productId: string): Promise<string> {
+    const chatsRef = collection(db, 'chats');
+
+    // Check if a chat already exists between these two users for this product
+    const q = query(chatsRef, 
+        where('participants', 'array-contains', userId1),
+        where('productId', '==', productId)
+    );
+
+    const querySnapshot = await getDocs(q);
+    const existingChats = querySnapshot.docs.map(d => ({...d.data(), id: d.id}) as Chat).filter(c => c.participants.includes(userId2));
+
+    if (existingChats.length > 0) {
+        return existingChats[0].id;
+    }
+
+    // If not, create a new chat
+    const [user1Data, user2Data, productData] = await Promise.all([
+        getUser(db, userId1),
+        getUser(db, userId2),
+        getProduct(db, productId)
+    ]);
+
+    if (!user1Data || !user2Data || !productData) {
+        throw new Error("Could not find user or product to create chat.");
+    }
+
+    const newChat: Omit<Chat, 'id'> = {
+        participants: [userId1, userId2],
+        participantDetails: {
+            [userId1]: { name: user1Data.name, avatar: user1Data.profilePicture || '' },
+            [userId2]: { name: user2Data.name, avatar: user2Data.profilePicture || '' }
+        },
+        productId,
+        productTitle: productData.title,
+        productImage: productData.images[0],
+        createdAt: serverTimestamp(),
+    };
+
+    const docRef = await addDoc(chatsRef, newChat);
+    return docRef.id;
+}
+
+
+export async function getChat(db: Firestore, chatId: string): Promise<Chat | undefined> {
+    const docRef = doc(db, 'chats', chatId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() } as Chat;
+    }
+    return undefined;
+}
+
+
+export async function getChatsForUser(db: Firestore, userId: string): Promise<Chat[]> {
+    const chatsRef = collection(db, 'chats');
+    const q = query(
+        chatsRef, 
+        where('participants', 'array-contains', userId),
+        orderBy('lastMessage.timestamp', 'desc')
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Chat);
+}
+
+export async function sendMessage(db: Firestore, chatId: string, senderId: string, text: string) {
+    if (!text.trim()) return;
+
+    const messagesRef = collection(db, 'chats', chatId, 'messages');
+    const chatRef = doc(db, 'chats', chatId);
+
+    const newMessage = {
+        chatId,
+        senderId,
+        text: text.trim(),
+        timestamp: serverTimestamp(),
+    };
+
+    await addDoc(messagesRef, newMessage);
+
+    // Update last message on the chat document
+    await updateDoc(chatRef, {
+        lastMessage: {
+            text: text.trim(),
+            timestamp: serverTimestamp(),
+        }
+    });
+}
+
+    

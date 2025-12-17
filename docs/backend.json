@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -75,6 +76,46 @@
         }
       },
       "required": ["title", "price", "category", "condition", "sellerId", "images", "createdAt"]
+    },
+    "Chat": {
+      "title": "Chat",
+      "description": "Represents a conversation between two users about a product.",
+      "type": "object",
+      "properties": {
+        "participants": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Array of two user UIDs."
+        },
+        "participantDetails": {
+          "type": "object",
+          "description": "Map of user details for quick access."
+        },
+        "productId": { "type": "string" },
+        "productTitle": { "type": "string" },
+        "productImage": { "type": "string", "format": "uri" },
+        "lastMessage": {
+          "type": "object",
+          "properties": {
+            "text": { "type": "string" },
+            "timestamp": { "type": "string", "format": "date-time" }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["participants", "productId", "createdAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Represents a single message within a chat.",
+      "type": "object",
+      "properties": {
+        "chatId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["chatId", "senderId", "text", "timestamp"]
     }
   },
   "auth": {
@@ -91,6 +132,16 @@
     "/products/{productId}": {
       "schema": "Product",
       "description": "Stores all product listings."
+    },
+    "/chats/{chatId}": {
+      "schema": "Chat",
+      "description": "Stores chat sessions between users."
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+        "schema": "Message",
+        "description": "Stores messages for a specific chat."
     }
   }
 }
+
+    

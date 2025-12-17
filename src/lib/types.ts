@@ -1,3 +1,4 @@
+
 export interface Product {
   id: string;
   title: string;
@@ -18,6 +19,7 @@ export interface Category {
 
 export interface User {
   id: string;
+  uid?: string; // Keep uid for firebase auth consistency
   name: string;
   email: string;
   profilePicture?: string;
@@ -25,3 +27,34 @@ export interface User {
   createdAt: any; // Can be a server timestamp
   listings?: string[];
 }
+
+
+export interface Chat {
+    id: string;
+    participants: string[];
+    participantDetails: {
+        [uid: string]: {
+            name: string;
+            avatar: string;
+        }
+    };
+    productId: string;
+    productTitle: string;
+    productImage: string;
+    lastMessage?: {
+        text: string;
+        timestamp: any;
+    };
+    createdAt: any;
+}
+
+
+export interface Message {
+    id: string;
+    chatId: string;
+    senderId: string;
+    text: string;
+    timestamp: any;
+}
+
+    

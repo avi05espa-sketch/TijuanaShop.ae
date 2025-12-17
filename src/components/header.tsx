@@ -1,6 +1,8 @@
+
 "use client";
 
 import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
 import { MobileSheet } from './mobile-sheet';
@@ -15,6 +17,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { getAuth, signOut } from 'firebase/auth';
+import { Input } from './ui/input';
+import { Search } from 'lucide-react';
+import { FormEvent } from 'react';
 
 function UserNav() {
     const { user, loading } = useUser();
@@ -58,7 +63,10 @@ function UserNav() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                    <Link href="/profile" className="w-full">Perfil</Link>
+                    <Link href={`/profile/${user.uid}`} className="w-full">Perfil</Link>
+                </DropdownMenuItem>
+                 <DropdownMenuItem>
+                    <Link href="/account/messages" className="w-full">Mensajes</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                     <Link href="/account/listings" className="w-full">Mis Artículos</Link>
@@ -75,16 +83,52 @@ function UserNav() {
     )
 }
 
+function SearchBar() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+
+    const handleSearch = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const searchQuery = formData.get('search') as string;
+        
+        if (pathname !== '/') {
+            router.push(`/?search=${encodeURIComponent(searchQuery)}`);
+        } else {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set('search', searchQuery);
+            router.push(`?${params.toString()}`);
+        }
+    }
+
+    return (
+        <form onSubmit={handleSearch} className="relative w-full max-w-md hidden md:flex">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input 
+            name="search"
+            placeholder="Buscar en Tijuana Shop..."
+            defaultValue={searchParams.get('search') || ''}
+            className="pl-9 w-full bg-zinc-100 dark:bg-zinc-800 focus:bg-background"
+          />
+        </form>
+    );
+}
+
 
 export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+      <div className="container flex h-16 items-center justify-between px-4 md:px-6 gap-4">
         <div className="flex items-center gap-2 sm:gap-4">
           <div className="md:hidden">
             <MobileSheet />
           </div>
           <Logo />
+        </div>
+        
+        <div className="flex-1 flex justify-center px-4">
+            <SearchBar />
         </div>
 
         <div className="flex items-center gap-2">
@@ -94,3 +138,5 @@ export function Header() {
     </header>
   );
 }
+
+    
