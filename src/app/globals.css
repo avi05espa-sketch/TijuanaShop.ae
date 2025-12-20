@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    /* Tijuana Marketplace Theme */
-    --background: 26 50% 95%; /* #F8EFE9 - Light, desaturated orange */
+    /* New Vibrant Theme */
+    --background: 210 20% 98%; /* Almost white */
     --foreground: 222.2 84% 4.9%;
     
     --card: 0 0% 100%;
@@ -14,46 +14,46 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     
-    --primary: 15 100% 64%; /* #FF7849 - Vibrant orange */
+    --primary: 25 95% 53%; /* Naranja */
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 26 40% 90%;
+    --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     
-    --muted: 220 9% 46%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
     
-    --accent: 4 69% 44%; /* #B83328 - Deep red */
+    --accent: 330 85% 60%; /* Rosa */
     --accent-foreground: 0 0% 100%;
     
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     
-    --border: 26 30% 85%;
-    --input: 26 30% 85%;
-    --ring: 15 100% 64%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 25 95% 53%; /* Naranja */
     
     --radius: 0.5rem;
     
-    --chart-1: 15 90% 55%;
-    --chart-2: 4 80% 50%;
-    --chart-3: 30 90% 60%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --chart-1: 220 70% 50%; /* Azul */
+    --chart-2: 150 70% 45%; /* Verde */
+    --chart-3: 45 90% 55%;  /* Amarillo */
+    --chart-4: 330 85% 60%; /* Rosa */
+    --chart-5: 25 95% 53%;  /* Naranja */
   }
 
   .dark {
-    /* Dark theme with orange/red accents */
-    --background: 220 13% 10%;
+    /* Dark theme with vibrant accents */
+    --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     
-    --card: 220 13% 15%;
+    --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
     
-    --popover: 220 13% 10%;
+    --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
     
-    --primary: 15 100% 64%; /* #FF7849 */
+    --primary: 25 95% 53%; /* Naranja */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -62,21 +62,21 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
     
-    --accent: 4 75% 55%; /* #D44D3F */
+    --accent: 330 85% 60%; /* Rosa */
     --accent-foreground: 0 0% 100%;
     
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     
-    --border: 217.2 32.6% 25%;
-    --input: 217.2 32.6% 25%;
-    --ring: 15 100% 64%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 25 95% 53%; /* Naranja */
 
-    --chart-1: 15 90% 55%;
-    --chart-2: 4 80% 50%;
-    --chart-3: 30 90% 60%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --chart-1: 220 70% 50%; /* Azul */
+    --chart-2: 150 70% 45%; /* Verde */
+    --chart-3: 45 90% 55%;  /* Amarillo */
+    --chart-4: 330 85% 60%; /* Rosa */
+    --chart-5: 25 95% 53%;  /* Naranja */
   }
 }
 
