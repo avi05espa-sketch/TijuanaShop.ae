@@ -6,10 +6,10 @@ import { Users, Package, MessageSquare, ShieldAlert } from "lucide-react";
 import Link from 'next/link';
 
 const stats = [
-    { title: "Usuarios Registrados", value: "1,250", icon: Users, change: "+12%", changeType: "increase" },
-    { title: "Publicaciones Activas", value: "8,420", icon: Package, change: "+5%", changeType: "increase" },
-    { title: "Mensajes Totales", value: "11,203", icon: MessageSquare, change: "+8%", changeType: "increase" },
-    { title: "Reportes Pendientes", value: "15", icon: ShieldAlert, change: "+3", changeType: "decrease" },
+    { title: "Usuarios Registrados", value: "1,250", icon: Users, change: "+12%", changeType: "increase", iconColor: "text-chart-1" },
+    { title: "Publicaciones Activas", value: "8,420", icon: Package, change: "+5%", changeType: "increase", iconColor: "text-chart-2" },
+    { title: "Mensajes Totales", value: "11,203", icon: MessageSquare, change: "+8%", changeType: "increase", iconColor: "text-chart-3" },
+    { title: "Reportes Pendientes", value: "15", icon: ShieldAlert, change: "+3", changeType: "decrease", iconColor: "text-chart-4" },
 ]
 
 export default function AdminDashboardPage() {
@@ -20,7 +20,7 @@ export default function AdminDashboardPage() {
               <Card key={stat.title}>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                      <stat.icon className="h-4 w-4 text-muted-foreground" />
+                      <stat.icon className={`h-4 w-4 text-muted-foreground ${stat.iconColor}`} />
                   </CardHeader>
                   <CardContent>
                       <div className="text-2xl font-bold">{stat.value}</div>
