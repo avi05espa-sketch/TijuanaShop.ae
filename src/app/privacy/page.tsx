@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -15,9 +16,9 @@ export default function PrivacyPage() {
       </header>
       <main className="container mx-auto max-w-4xl px-4 py-8 md:py-12">
         <div className="prose dark:prose-invert max-w-none">
-          <h1>Política de Privacidad</h1>
+          <h1>Políticas de Privacidad</h1>
           <p>
-            Tu privacidad es importante para nosotros. Es política de Tijuana Shop respetar tu privacidad con respecto a cualquier información que podamos recopilar de ti a través de nuestra aplicación.
+            Tu privacidad es importante para nosotros. Es política de Avi Espa respetar tu privacidad con respecto a cualquier información que podamos recopilar de ti a través de nuestra aplicación.
           </p>
           <h2>1. Información que recopilamos</h2>
           <p>
@@ -25,7 +26,7 @@ export default function PrivacyPage() {
           </p>
           <h2>2. Cómo usamos tu información</h2>
           <p>
-            Usamos la información que recopilamos para operar y mantener los servicios de Tijuana Shop, para permitir la comunicación entre usuarios, para procesar transacciones y para personalizar tu experiencia. No compartimos ninguna información de identificación personal públicamente o con terceros, excepto cuando la ley lo exige o para facilitar las funciones principales de la aplicación (como mostrar tu nombre de perfil a otros usuarios).
+            Usamos la información que recopilamos para operar y mantener los servicios de Avi Espa, para permitir la comunicación entre usuarios, para procesar transacciones y para personalizar tu experiencia. No compartimos ninguna información de identificación personal públicamente o con terceros, excepto cuando la ley lo exige o para facilitar las funciones principales de la aplicación (como mostrar tu nombre de perfil a otros usuarios).
           </p>
           <h2>3. Geolocalización</h2>
           <p>

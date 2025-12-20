@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -17,11 +18,11 @@ export default function TermsPage() {
         <div className="prose dark:prose-invert max-w-none">
           <h1>Términos y Condiciones</h1>
           <p>
-            Bienvenido a Tijuana Shop. Estos términos y condiciones describen las reglas y regulaciones para el uso de la aplicación de Tijuana Shop.
+            Bienvenido a Avi Espa. Estos términos y condiciones describen las reglas y regulaciones para el uso de la aplicación de Avi Espa.
           </p>
           <h2>1. Aceptación de los Términos</h2>
           <p>
-            Al acceder y utilizar esta aplicación, asumimos que aceptas estos términos y condiciones en su totalidad. No continúes usando Tijuana Shop si no estás de acuerdo con todos los términos y condiciones establecidos en esta página.
+            Al acceder y utilizar esta aplicación, asumimos que aceptas estos términos y condiciones en su totalidad. No continúes usando Avi Espa si no estás de acuerdo con todos los términos y condiciones establecidos en esta página.
           </p>
           <h2>2. Publicaciones de Productos</h2>
           <p>
@@ -33,7 +34,7 @@ export default function TermsPage() {
           </p>
            <h2>4. Limitación de Responsabilidad</h2>
           <p>
-            Tijuana Shop es una plataforma que conecta a compradores y vendedores. No somos parte de ninguna transacción entre usuarios. No garantizamos la calidad, seguridad o legalidad de los artículos publicados. Cualquier disputa que surja de una transacción debe resolverse directamente entre el comprador y el vendedor.
+            Avi Espa es una plataforma que conecta a compradores y vendedores. No somos parte de ninguna transacción entre usuarios. No garantizamos la calidad, seguridad o legalidad de los artículos publicados. Cualquier disputa que surja de una transacción debe resolverse directamente entre el comprador y el vendedor.
           </p>
           
           <p><em>Última actualización: {lastUpdated}</em></p>
