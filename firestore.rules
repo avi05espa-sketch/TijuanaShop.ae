@@ -1,0 +1,38 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users:
+    // - Anyone can create a user profile (during sign-up).
+    // - Users can only read/update/delete their own profile.
+    match /users/{userId} {
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null;
+    }
+
+    // Products:
+    // - Anyone can read product listings.
+    // - Authenticated users can create new product listings.
+    // - Only the seller can update or delete their own product.
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.sellerId;
+    }
+
+    // Chats:
+    // - Only participants can read or write to a chat document.
+    match /chats/{chatId} {
+      allow read, update, create, delete: if request.auth != null && request.auth.uid in resource.data.participants;
+
+      // Messages (subcollection of Chats)
+      // - Only participants of the parent chat can read/write messages.
+      match /messages/{messageId} {
+         allow read, create: if request.auth != null && get(/databases/$(database)/documents/chats/$(chatId)).data.participants.hasAny([request.auth.uid]);
+         allow update, delete: if false; // Disallow message editing/deletion for simplicity
+      }
+    }
+  }
+}
