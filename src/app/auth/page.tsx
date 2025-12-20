@@ -64,7 +64,7 @@ function GoogleSignInButton({ onLoading }: { onLoading: (isLoading: boolean) => 
                     favorites: [],
                 };
                 await createUserProfile(db, user.uid, userProfileData);
-                toast({ title: "¡Bienvenido a TijuanaShop!", description: "Tu cuenta ha sido creada exitosamente." });
+                toast({ title: "¡Bienvenido a Avi Espa!", description: "Tu cuenta ha sido creada exitosamente." });
             } else {
                 toast({ title: `¡Bienvenido de nuevo, ${user.displayName}!` });
             }
@@ -171,7 +171,7 @@ function LoginForm() {
                 ¿Olvidaste tu contraseña?
                 </Link>
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading} variant="success">
                 {isLoading ? "Iniciando..." : "Iniciar Sesión"}
             </Button>
         </form>
@@ -336,7 +336,7 @@ function RegisterForm() {
                 .
                 </Label>
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading || !termsAccepted || !locationVerified}>
+            <Button type="submit" className="w-full" disabled={isLoading || !termsAccepted || !locationVerified} variant="accent">
                 <UserPlus className="mr-2 h-4 w-4" />
                 {isLoading ? "Creando cuenta..." : "Crear Cuenta"}
             </Button>
