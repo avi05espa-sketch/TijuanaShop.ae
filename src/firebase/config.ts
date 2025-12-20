@@ -1,16 +1,15 @@
-
 // This file is not intended to be edited.
 // It is used to deploy and configure Firebase services.
 // To configure your Firebase project, edit the service-account.json file.
 import { FirebaseOptions, getApp, getApps, initializeApp } from 'firebase/app';
 
 const firebaseConfig: FirebaseOptions = {
-  apiKey: "REDACTED",
-  authDomain: "tijuana-shop.firebaseapp.com",
-  projectId: "tijuana-shop",
-  storageBucket: "tijuana-shop.appspot.com",
-  messagingSenderId: "923422739335",
-  appId: "1:923422739335:web:2a823c316c8f58b7a6953f"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
 
