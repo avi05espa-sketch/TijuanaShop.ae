@@ -1,3 +1,4 @@
 'use client';
 // Flows will be imported for their side effects in this file.
 import '@/ai/flows/search-flow';
+import '@/ai/flows/avi-flow';
