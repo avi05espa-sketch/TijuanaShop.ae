@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
 import { MobileSheet } from './mobile-sheet';
-import { useUser, useFirebase, useFirestore } from '@/firebase';
+import { useUser, useFirebase } from '@/firebase';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,7 +38,7 @@ function UserNav() {
                 // For development, we can hardcode an admin UID.
                 // In production, this check should be more robust, relying on custom claims.
                 // This is a temporary measure for UI development.
-                const adminUID = "s0O2t5yTLYh4VnSgxjS13iK1xay1"; // Replace with a real Admin UID for testing
+                const adminUID = "s0O2t5yTLYh4VnSgxjS13iK1xay1"; 
                 if (user.uid === adminUID) {
                     setIsAdmin(true);
                     return;
@@ -51,6 +51,8 @@ function UserNav() {
                 } else {
                     setIsAdmin(false);
                 }
+            } else {
+                setIsAdmin(false);
             }
         };
 
@@ -235,5 +237,3 @@ export function Header() {
     </header>
   );
 }
-
-    

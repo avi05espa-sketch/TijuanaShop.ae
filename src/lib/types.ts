@@ -1,4 +1,6 @@
 
+import { Timestamp } from 'firebase/firestore';
+
 export interface Product {
   id: string;
   title: string;
@@ -26,7 +28,7 @@ export interface User {
   email: string;
   profilePicture?: string;
   location?: string;
-  createdAt: any; // Can be a server timestamp
+  createdAt: Timestamp;
   favorites?: string[];
   rating?: number;
   ratingCount?: number;

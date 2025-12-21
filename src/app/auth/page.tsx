@@ -55,6 +55,7 @@ function GoogleSignInButton({ onLoading }: { onLoading: (isLoading: boolean) => 
             if (!userProfile) {
                 // New user, create a profile
                  const userProfileData = {
+                    uid: user.uid,
                     name: user.displayName || "Usuario Anónimo",
                     email: user.email!,
                     profilePicture: user.photoURL || `https://picsum.photos/seed/${user.uid}/400/400`,
@@ -62,6 +63,7 @@ function GoogleSignInButton({ onLoading }: { onLoading: (isLoading: boolean) => 
                     rating: 0,
                     ratingCount: 0,
                     favorites: [],
+                    role: "user" as const,
                 };
                 await createUserProfile(db, user.uid, userProfileData);
                 toast({ title: "¡Bienvenido a Tijuana Shop!", description: "Tu cuenta ha sido creada exitosamente." });
@@ -260,6 +262,7 @@ function RegisterForm() {
       await updateProfile(user, { displayName: fullName });
       
       const userProfileData = {
+        uid: user.uid,
         name: fullName,
         email: user.email!,
         profilePicture: user.photoURL || `https://picsum.photos/seed/${user.uid}/400/400`,
@@ -267,6 +270,7 @@ function RegisterForm() {
         rating: 0,
         ratingCount: 0,
         favorites: [],
+        role: "user" as const,
       };
       
       await createUserProfile(db, user.uid, userProfileData);
@@ -399,5 +403,3 @@ export default function AuthPage() {
     </div>
   );
 }
-
-    

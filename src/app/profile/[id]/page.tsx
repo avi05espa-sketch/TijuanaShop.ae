@@ -14,6 +14,8 @@ import { ProductCard } from '@/components/product-card';
 import Link from 'next/link';
 import { StarRating } from '@/components/star-rating';
 import { Skeleton } from '@/components/ui/skeleton';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 function ProfileSkeleton() {
   return (
@@ -130,7 +132,9 @@ export default function ProfilePage() {
                         <span>{user.email}</span>
                     </div>
                 </div>
-                 <p className="text-sm text-muted-foreground mt-2">Miembro desde {new Date(user.createdAt?.toDate()).toLocaleDateString('es-MX', { year: 'numeric', month: 'long' })}</p>
+                 <p className="text-sm text-muted-foreground mt-2">
+                  Miembro desde {user.createdAt ? format(user.createdAt.toDate(), "MMMM 'de' yyyy", { locale: es }) : 'hace un tiempo'}
+                </p>
             </div>
         </div>
 
