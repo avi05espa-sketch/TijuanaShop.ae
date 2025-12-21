@@ -220,6 +220,11 @@ export default function Home() {
                       <p className="text-lg md:text-xl mt-4 text-muted-foreground">
                         Compra, vende y descubre artículos únicos en tu comunidad.
                       </p>
+                      <div className="mt-6">
+                        <Button asChild size="lg">
+                          <Link href="#recent-products">Ver anuncios</Link>
+                        </Button>
+                      </div>
                   </div>
                 </div>
                  <div className="absolute inset-0 z-0">
@@ -265,3 +270,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

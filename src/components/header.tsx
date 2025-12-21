@@ -18,7 +18,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { getAuth, signOut } from 'firebase/auth';
 import { Input } from './ui/input';
-import { Loader2, Search, Shield } from 'lucide-react';
+import { Loader2, Search, Shield, Settings, HelpCircle } from 'lucide-react';
 import { FormEvent, useState, useEffect } from 'react';
 import { interpretSearchQuery } from '@/ai/flows/search-flow';
 import { getUser } from '@/lib/data';
@@ -69,7 +69,7 @@ function UserNav() {
                 <Button variant="ghost" asChild>
                     <Link href="/auth">Iniciar Sesión</Link>
                 </Button>
-                <Button variant="accent" asChild>
+                <Button variant="teal" asChild>
                     <Link href="/auth?tab=register">Crear Cuenta</Link>
                 </Button>
             </div>
@@ -105,8 +105,21 @@ function UserNav() {
                 <DropdownMenuItem asChild>
                     <Link href="/account/listings" className="w-full">Mis Artículos</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem asChild>
                      <Link href="/account/favorites" className="w-full">Favoritos</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                 <DropdownMenuItem asChild>
+                    <Link href="/account/settings">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Ajustes</span>
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link href="/help">
+                        <HelpCircle className="mr-2 h-4 w-4" />
+                        <span>Ayuda</span>
+                    </Link>
                 </DropdownMenuItem>
                 {isAdmin && (
                     <>
@@ -222,3 +235,5 @@ export function Header() {
     </header>
   );
 }
+
+    

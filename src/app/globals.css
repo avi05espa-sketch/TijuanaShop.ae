@@ -1,14 +1,14 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* New Vibrant Theme */
-    --background: 210 20% 98%; /* Almost white */
+    --background: 240 10% 97%; /* Light Gray */
     --foreground: 222.2 84% 4.9%;
     
-    --card: 0 0% 100%;
+    --card: 0 0% 100%; /* White */
     --card-foreground: 222.2 84% 4.9%;
     
     --popover: 0 0% 100%;
@@ -43,7 +43,6 @@
   }
 
   .dark {
-    /* Dark theme with vibrant accents */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     
@@ -88,3 +87,5 @@
     @apply bg-background text-foreground;
   }
 }
+
+    

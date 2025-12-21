@@ -326,7 +326,11 @@ function RegisterForm() {
                 <Checkbox
                     id="terms"
                     checked={termsAccepted}
-                    onCheckedChange={(checked: boolean | 'indeterminate') => setTermsAccepted(checked as boolean)}
+                    onCheckedChange={(checkedState) => {
+                         if (typeof checkedState === 'boolean') {
+                            setTermsAccepted(checkedState);
+                        }
+                    }}
                 />
                 <Label
                     htmlFor="terms"
@@ -395,3 +399,5 @@ export default function AuthPage() {
     </div>
   );
 }
+
+    
