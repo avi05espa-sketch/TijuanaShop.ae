@@ -138,7 +138,7 @@ function LoginForm() {
   return (
     <div className="space-y-6">
         <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-800">Iniciar Sesión</h2>
+            <h2 className="text-3xl font-bold text-gray-800">Accede a tu Cuenta</h2>
             <p className="text-gray-500 mt-2">Ingresa a tu cuenta de Tijuana Shop</p>
         </div>
         <form onSubmit={handleLogin} className="space-y-4">
