@@ -28,3 +28,16 @@ export default function Vender() {
     </div>
   );
 }
+const manejarPagoDestacado = async () => {
+  const res = await fetch('/api/checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      precioId: 'prod_99_id', // Aquí pondrás el ID que te dé Stripe para los $99
+      successUrl: window.location.origin,
+      cancelUrl: window.location.origin,
+    }),
+  });
+  const data = await res.json();
+  if (data.url) window.location.href = data.url; // ¡Esto abre la pasarela de pago!
+};
