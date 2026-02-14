@@ -42,4 +42,4 @@ export default function Inicio() {
       </button>
     </div>
   );
-}
+        }
