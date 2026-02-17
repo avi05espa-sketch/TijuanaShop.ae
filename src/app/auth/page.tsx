@@ -1,22 +1,37 @@
 'use client';
-import React, { Suspense } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import React from 'react';
 
 export default function AuthPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-black italic">TIJUANA SHOP</CardTitle>
-          <CardDescription>Tu Marketplace Local en Línea</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="p-8 text-center bg-gray-100 rounded-2xl border-2 border-dashed border-gray-300">
-            <p className="text-sm font-bold text-gray-500 uppercase">El sistema de usuarios está en mantenimiento.</p>
-            <p className="text-[10px] mt-2 italic">Avi-Espa</p>
-          </div>
-        </CardContent>
-      </Card>
+    <div style={{ 
+      minHeight: 'screen', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      padding: '20px',
+      fontFamily: 'sans-serif' 
+    }}>
+      <h1 style={{ fontWeight: '900', fontStyle: 'italic', fontSize: '2rem' }}>TIJUANA SHOP</h1>
+      <p style={{ color: '#666', fontSize: '0.8rem', marginBottom: '20px' }}>Tu Marketplace Local en Línea</p>
+      
+      <div style={{ 
+        border: '2px dashed #ccc', 
+        padding: '40px', 
+        borderRadius: '20px', 
+        textAlign: 'center',
+        backgroundColor: '#f9f9f9' 
+      }}>
+        <p style={{ fontWeight: 'bold', color: '#999' }}>MÓDULO DE USUARIOS EN MANTENIMIENTO</p>
+        <p style={{ fontSize: '10px', marginTop: '10px' }}>Avi-Espa</p>
+      </div>
+      
+      <button 
+        onClick={() => window.location.href = '/'}
+        style={{ marginTop: '20px', cursor: 'pointer', fontWeight: 'bold' }}
+      >
+        Volver al inicio
+      </button>
     </div>
   );
 }
