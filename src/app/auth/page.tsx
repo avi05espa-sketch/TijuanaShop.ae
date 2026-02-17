@@ -3,35 +3,18 @@ import React from 'react';
 
 export default function AuthPage() {
   return (
-    <div style={{ 
-      minHeight: 'screen', 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      padding: '20px',
-      fontFamily: 'sans-serif' 
-    }}>
-      <h1 style={{ fontWeight: '900', fontStyle: 'italic', fontSize: '2rem' }}>TIJUANA SHOP</h1>
-      <p style={{ color: '#666', fontSize: '0.8rem', marginBottom: '20px' }}>Tu Marketplace Local en Línea</p>
-      
-      <div style={{ 
-        border: '2px dashed #ccc', 
-        padding: '40px', 
-        borderRadius: '20px', 
-        textAlign: 'center',
-        backgroundColor: '#f9f9f9' 
-      }}>
-        <p style={{ fontWeight: 'bold', color: '#999' }}>MÓDULO DE USUARIOS EN MANTENIMIENTO</p>
-        <p style={{ fontSize: '10px', marginTop: '10px' }}>Avi-Espa</p>
+    <div style={{ textAlign: 'center', padding: '100px 20px', fontFamily: 'sans-serif' }}>
+      <h1 style={{ fontSize: '2.5rem', fontWeight: '900', fontStyle: 'italic' }}>TIJUANA SHOP</h1>
+      <div style={{ margin: '40px auto', maxWidth: '400px', border: '2px dashed #ccc', padding: '40px', borderRadius: '30px' }}>
+        <p style={{ fontWeight: 'bold', color: '#666' }}>SISTEMA DE USUARIOS</p>
+        <p style={{ color: '#999' }}>En mantenimiento por actualización de Avi-Espa</p>
       </div>
-      
       <button 
         onClick={() => window.location.href = '/'}
-        style={{ marginTop: '20px', cursor: 'pointer', fontWeight: 'bold' }}
+        style={{ padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' }}
       >
-        Volver al inicio
+        VOLVER AL INICIO
       </button>
     </div>
   );
-}
+          }
