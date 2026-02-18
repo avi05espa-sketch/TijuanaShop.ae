@@ -13,9 +13,9 @@ export default function RootLayout({
         <title>Tijuana Shop | Avi-Espa</title>
       </head>
       <body>
-        <div className="flex min-h-screen flex-col">
+        <main>
           {children}
-        </div>
+        </main>
       </body>
     </html>
   );
