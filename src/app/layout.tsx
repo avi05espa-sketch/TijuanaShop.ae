@@ -1,21 +1,18 @@
 'use client';
 import React from "react";
+import { usePathname } from "next/navigation";
 import "./globals.css";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
   return (
     <html lang="es">
       <head>
-        <title>Tijuana Shop | Avi-Espa</title>
+        <title>Tijuana Shop | Tu Marketplace Local en Línea</title>
       </head>
       <body>
-        <main>
-          {children}
-        </main>
+        {children}
       </body>
     </html>
   );
