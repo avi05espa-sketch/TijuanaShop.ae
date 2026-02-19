@@ -1,22 +1,19 @@
-"use client";
-
-import React, { useEffect } from "react";
+'use client';
+import React from "react";
 import { usePathname } from "next/navigation";
-import { logEventSafe } from "@/lib/firebaseClient";
+import "./globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  useEffect(() => {
-    // Envío automático de page_view en cada cambio de ruta (App Router)
-    (async () => {
-      await logEventSafe("page_view", { page_path: pathname });
-    })();
-  }, [pathname]);
-
   return (
     <html lang="es">
-      <body>{children}</body>
+      <head>
+        <title>Tijuana Shop | Tu Marketplace Local en Línea</title>
+      </head>
+      <body>
+        {children}
+      </body>
     </html>
   );
 }
