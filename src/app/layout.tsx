@@ -4,12 +4,10 @@ import { usePathname } from "next/navigation";
 import "./globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-
   return (
     <html lang="es">
       <head>
-        <title>Tijuana Shop | Tu Marketplace Local en Línea</title>
+        <title>Tijuana Shop | Avi-Espa</title>
       </head>
       <body>
         {children}
