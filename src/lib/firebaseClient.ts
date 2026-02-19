@@ -1,3 +1,3 @@
-export const  = (name: string, params?: any) => {
+export const logEventSafe = (name: string, params?: any) => {
   console.log("Evento:", name, params);
 };
