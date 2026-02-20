@@ -1,10 +1,10 @@
 'use client';
 import React, { useEffect } from "react";
 
-export default function FirebaseErrorListener({ children }: { children: React.ReactNode }) {
+export function FirebaseErrorListener() {
   useEffect(() => {
     console.log("Tijuana Shop: Sistema listo");
   }, []);
 
-  return <>{children}</>;
+  return null;
 }

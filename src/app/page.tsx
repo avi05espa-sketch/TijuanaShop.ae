@@ -52,7 +52,7 @@ export default function HomeTijuanaShop() {
             
             {/* Botón de Vender */}
             <Button 
-              onClick={() => irA('/vender')}
+              onClick={() => irA('/sell')}
               className="bg-[#00cba9] hover:bg-black text-white font-black rounded-2xl text-xs px-5 shadow-lg shadow-[#00cba9]/20"
             >
               <PlusCircle className="w-4 h-4 mr-1"/> VENDER
@@ -101,7 +101,7 @@ export default function HomeTijuanaShop() {
 
         {/* Botón Central Flotante para Vender */}
         <button 
-          onClick={() => irA('/vender')} 
+          onClick={() => irA('/sell')} 
           className="bg-black w-14 h-14 rounded-2xl flex items-center justify-center -mt-12 shadow-xl shadow-black/20 border-4 border-white transition-transform active:scale-95"
         >
           <PlusCircle className="w-8 h-8 text-[#00cba9]" />
