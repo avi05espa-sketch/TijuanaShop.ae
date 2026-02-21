@@ -1,8 +1,6 @@
-// src/firebase/config.ts
+import { FirebaseApp, FirebaseOptions, getApp, getApps, initializeApp } from "firebase/app";
 
-import { initializeApp, getApps, FirebaseApp } from "firebase/app";
-
-const firebaseConfig = {
+const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY as string,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN as string,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID as string,
@@ -12,6 +10,8 @@ const firebaseConfig = {
 };
 
 export const app: FirebaseApp =
-  getApps().length === 0
-    ? initializeApp(firebaseConfig)
-    : getApps()[0];
+  getApps().length > 0
+    ? getApp()
+    : initializeApp(firebaseConfig);
+
+export { firebaseConfig };
