@@ -5,4 +5,4 @@ export const FirebaseProvider = ({ children }: { children: React.ReactNode }) =>
   return <>{children}</>;
 };
 
-export const useFirebase = () => ({}); 
+export const useFirebase = () => ({});
