@@ -1,13 +1,8 @@
-'use client';
-import React, { createContext, useContext } from 'react';
-
-const FirebaseContext = createContext<any>(null);
-
-export const useFirebase = () => useContext(FirebaseContext);
+import { app } from "./config";
 
 export const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
   return (
-    <FirebaseContext.Provider value={{}}>
+    <FirebaseContext.Provider value={{ app }}>
       {children}
     </FirebaseContext.Provider>
   );
