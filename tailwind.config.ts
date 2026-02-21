@@ -7,6 +7,7 @@ export default {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     container: {
@@ -18,6 +19,7 @@ export default {
     },
     extend: {
       fontFamily: {
+        sans: ['var(--font-pt-sans)', 'sans-serif'],
         body: ['var(--font-pt-sans)', 'sans-serif'],
         headline: ['var(--font-pt-sans)', 'sans-serif'],
         code: ['monospace'],
