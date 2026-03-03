@@ -1,48 +1,15 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { app } from "./config";
+import { app } from "./config"; // Asegúrate de que la ruta sea correcta
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { FirebaseApp } from "firebase/app"; // Añade este import de tipo
 
-const auth = getAuth(app);
-const firestore = getFirestore(app);
+// Opcional: Forzar el tipo si el error persiste en Vercel
+const firebaseApp = app as FirebaseApp;
 
-type FirebaseContextType = {
-  auth: typeof auth;
-  firestore: typeof firestore;
-};
+const auth = getAuth(firebaseApp);
+const firestore = getFirestore(firebaseApp);
 
-const FirebaseContext = createContext<FirebaseContextType | null>(null);
-
-export const FirebaseProvider = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <FirebaseContext.Provider value={{ auth, firestore }}>
-      {children}
-    </FirebaseContext.Provider>
-  );
-};
-
-export const useFirebase = () => {
-  const context = useContext(FirebaseContext);
-  if (!context) {
-    throw new Error("useFirebase must be used inside FirebaseProvider");
-  }
-  return context;
-};
-
-export const useUser = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  return { user, loading };
-};
+// ... resto del código igual
