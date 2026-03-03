@@ -49,4 +49,4 @@ const ProductCard = ({ product, onClick }: ProductCardProps) => {
   );
 };
 
-export default ProductCard;
+export default ProductCard; 
