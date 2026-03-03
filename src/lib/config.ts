@@ -6,6 +6,7 @@ import {
   initializeApp,
 } from "firebase/app";
 
+// Forzamos el tipo string para que TypeScript no asuma 'undefined' en el build de Vercel
 const firebaseConfig: FirebaseOptions = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY as string,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN as string,
@@ -15,9 +16,10 @@ const firebaseConfig: FirebaseOptions = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID as string,
 };
 
+// Exportación tipada para evitar errores en otros archivos
 export const app: FirebaseApp =
-  getApps().length > 0
-    ? getApp()
+  getApps().length > 0 
+    ? getApp() 
     : initializeApp(firebaseConfig);
 
 export { firebaseConfig };
